@@ -11,7 +11,8 @@ int main()
     cout << "Hi COVID-19 Outbreak Data Analyst!" << endl << endl;
     cout << "=======================================================" << endl;
     int csvLineCount;
-    const char* csvFileName = "../../Labs and Assignments/assignment3/time_series_covid19_confirmed_global.csv";
+    const char* csvFileName = "assignment3/time_series_covid19_confirmed_global.csv";
+
     cout << "Reading the CSV file..." << endl;
     char** csvLines = readCSV(csvFileName, csvLineCount);
     if(csvLines == nullptr)
