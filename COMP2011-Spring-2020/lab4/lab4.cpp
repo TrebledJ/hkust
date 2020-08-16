@@ -26,8 +26,8 @@ class Application
     Printer print;
 public:
     Application()
+        : print{std::cout, ""}
     {
-        print.set_sep("");
     }
     
     int run()

@@ -121,8 +121,7 @@ private:
 int main() {
     Scanner sc;
     sc.set_interactive(INTERACTIVE);
-    Printer print;
-    print.set_sep("");
+    Printer print{std::cout, ""};
     
     auto [white, black] = sc.get<unsigned, unsigned>("(<white> <black>) >>> ");
     Shuttle shuttle{white, black};

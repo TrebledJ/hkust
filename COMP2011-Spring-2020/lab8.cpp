@@ -162,8 +162,7 @@ public:
         ofstream out{filename};
         if (!out) throw file_open_error{filename};
         
-        Printer file{out};
-        file.set_sep("");
+        Printer file{out, ""};
         
         for (auto it = data.begin(); it != data.end(); ++it)
         {
@@ -175,6 +174,13 @@ public:
     }
 };
 
+
+
+struct Point {
+    int x, y;
+    friend std::istream& operator>> (std::istream& is, Point& p) { return is >> p.x >> p.y; }
+    friend std::ostream& operator<< (std::ostream& os, Point const& p) { return os << p.x << " " << p.y; }
+};
 
 /**
  * The meat of the program
@@ -195,8 +201,8 @@ class Application
     
 public:
     Application()
+        : print{std::cout, ""}
     {
-        print.set_sep("");
     }
     
     bool load_database()
