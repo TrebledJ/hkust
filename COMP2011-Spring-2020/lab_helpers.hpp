@@ -244,8 +244,10 @@ std::tuple<Ts...> Scanner::get_impl(std::string const& prompt,
                                     std::index_sequence<Ints...> seq)
 {
     std::tuple<Ts...> tup;
-    //  read input, exit when reads are all OK (i.e. true)
+    //  read input into the tuple above, exit when reads are all OK (i.e. true)
     do { do_prompt(prompt); } while (!(saferead(std::get<Ints>(tup)) && ...));
+
+    //  ignore excess input, so that the next read can be clean
     if (ignore_after.value_or(m_interactive)) ignore_all();
     
     return tup;
