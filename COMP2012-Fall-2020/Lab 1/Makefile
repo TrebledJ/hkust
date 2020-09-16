@@ -2,7 +2,7 @@ CXX=clang++
 CXXFLAGS=-std=c++17 -I.
 DEPS=%.h
 
-all: build chocolate.exe burger.exe betterBurger.exe combo.exe
+all: chocolate.exe burger.exe betterBurger.exe combo.exe
 
 chocolate.exe: chocolate.o mainChocolate.cpp
 	$(CXX) -o $@ $(CXXFLAGS) chocolate.o mainChocolate.cpp
