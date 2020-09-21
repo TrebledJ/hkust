@@ -1,4 +1,4 @@
-CXX=clang++
+CXX=g++
 CXXFLAGS=-std=c++17 -I.
 DEPS=%.h
 
@@ -13,8 +13,8 @@ burger.exe: burger.o bread.o meat.o mainBurger.cpp
 betterBurger.exe: burger.o bread.o betterMeat.o mainBurger.cpp
 	$(CXX) -o $@ $(CXXFLAGS) burger.o bread.o betterMeat.o mainBurger.cpp
 
-combo.exe: burger.o bread.o betterMeat.o chocolate.o muffin.o mainCombo.cpp
-	$(CXX) -o $@ $(CXXFLAGS) burger.o bread.o betterMeat.o chocolate.o muffin.o mainCombo.cpp
+combo.exe: burger.o bread.o meat.o chocolate.o muffin.o mainCombo.cpp
+	$(CXX) -o $@ $(CXXFLAGS) burger.o bread.o meat.o chocolate.o muffin.o mainCombo.cpp
 
 %.o: %.cpp $(DEPS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
