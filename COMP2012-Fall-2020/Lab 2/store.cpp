@@ -1,7 +1,6 @@
 #include "store.h"
 
 #include <iostream>
-#include <algorithm>
 
 using namespace std;
 
@@ -18,10 +17,6 @@ Store::Store(string owner, int maxNumBreads, int maxNumMeats, int maxNumBurgers)
     breadShelf = new Bread*[maxNumBreads];
     meatShelf = new Meat*[maxNumMeats];
     burgerShelf = new Burger*[maxNumBurgers];
-
-    fill(breadShelf, breadShelf + maxNumBreads, nullptr);
-    fill(meatShelf, meatShelf + maxNumMeats, nullptr);
-    fill(burgerShelf, burgerShelf + maxNumBurgers, nullptr);
 
     // Finish constructing with printing.
     cout << "Store Constructed!" << endl;
