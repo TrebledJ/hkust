@@ -150,14 +150,13 @@ void setup()
   prev_state = state;
 }
 
-typedef unsigned long long uint32;
-
 void loop()
 {
-  static uint32 next_change = 0;
+  static uint32_t next_change = 0;
+  static uint32_t next_led_change = 0;
   static uint32_t music_index = 0;
 
-  uint32 now = millis();
+  uint32_t now = millis();
   if (now > next_change)
   {
     Note note = astronomia.notes[music_index];
@@ -165,6 +164,16 @@ void loop()
     play_note(note);
     next_change = now + time_of(note);
   }
+  
+  if (now > next_led_change)
+  {
+    for (int i = 0; i < NUM_LEDS; ++i)
+    {
+      digitalWrite(RED_LED[i], rand() % 2);
+      digitalWrite(GREEN_LED[i], (rand() * 31 + 107) % 2);
+    }
+    next_led_change = now + 100;
+  }
 
-  delay(10);
+  delay(20);
 }
