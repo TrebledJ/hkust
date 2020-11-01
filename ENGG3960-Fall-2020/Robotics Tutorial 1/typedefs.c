@@ -62,7 +62,7 @@
 #include <stdlib.h>
 
 
-typedef double inttype;
+typedef int inttype;
 
 inttype add(inttype a, inttype b) { return a + b; }
 inttype sub(inttype a, inttype b) { return a - b; }
