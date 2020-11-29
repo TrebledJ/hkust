@@ -1,0 +1,37 @@
+Now you have got a salary of 3000 dollars from your part-time job, paid directly to your bank account.
+Let's initialize a record! ^_^
+
+Income with amount 5000 dated 11/10/2020 initialized. 
+
+As this is around the end of the year, and you receive annual bonus in form of double pay! Hurray!!       
+Let's update our ledger! ^_^
+Note: the double pay is calculated as = salary * 2
+
+The transaction amount has been multiplied 2 times.
+
+Now you expect to get 1000 pocket money in CASH. This is a UNREALIZED income but you want to record it first.
+Income with amount 1000 dated 11/10/2020 initialized.
+
+You want to make some changes after you have got 1200 dollars.
+Transaction with 1200 dollars on 11/10/2020 added.
+Income has sent to 1
+The transaction has realized already!
+Identify where this income goes to...
+1
+Identifying which type of income is this...
+0
+1200
+Part time salary
+
+=====================================
+Income: Part time salary
+Income Date: 20/10/2020
+Amount: 1200
+Has been realized?: 1
+Amount added into: Cash
+=====================================
+
+Income with 1200 dollars on 20/10/2020 deleted.
+Transaction with 1200 dollars on 20/10/2020 deleted.
+Income with 1000 dollars on 11/10/2020 deleted.
+Transaction with 1000 dollars on 11/10/2020 deleted.
