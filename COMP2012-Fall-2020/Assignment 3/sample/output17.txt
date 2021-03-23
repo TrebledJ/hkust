@@ -1,0 +1,22 @@
+
+=== Test case 17 ===
+
+Testing A list of Book below...
+Item: Book A published on 20201201(in stock)
+Book: 1f,SectionA
+Item: Book B published on 20201202(in stock)
+Book: 1f,SectionB
+Item: Book C published on 20201203(in stock)
+Book: 2f,SectionA
+Item: Book D published on 20210103(in stock)
+Book: 2f,SectionB
+Item: Book E published on 20201101(in stock)
+Book: 3f,SectionA
+Item: Book F published on 20201102(in stock)
+Book: 3f,SectionB
+Book Book A Destructed
+Book Book B Destructed
+Book Book C Destructed
+Book Book D Destructed
+Book Book E Destructed
+Book Book F Destructed

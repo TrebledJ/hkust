@@ -1,0 +1,24 @@
+
+=== Test case 6 ===
+
+add {6,66}: collisions=0
+0: [Active]{6} | 1: [Empty] | 2: [Empty] | 3: [Empty] | 4: [Empty] | 5: [Empty] | 6: [Empty]
+
+add {1,11}: collisions=0
+0: [Active]{6} | 1: [Empty] | 2: [Active]{1} | 3: [Empty] | 4: [Empty] | 5: [Empty] | 6: [Empty]
+
+add {13,133}: collisions=1
+0: [Active]{6} | 1: [Active]{13} | 2: [Active]{1} | 3: [Empty] | 4: [Empty] | 5: [Empty] | 6: [Empty]
+
+add {20,200}: collisions=1
+0: [Active]{13} | 1: [Empty] | 2: [Active]{1} | 3: [Empty] | 4: [Empty] | 5: [Empty] | 6: [Empty] | 7: [Active]{6} | 8: [Active]{20} | 9: [Empty] | 10: [Empty] | 11: [Empty] | 12: [Empty] | 13: [Empty]
+
+found (6,66)
+found (1,11)
+found (13,133)
+found (20,200)
+not found key 99999
+
+current table:
+0: [Active]{13} | 1: [Empty] | 2: [Active]{1} | 3: [Empty] | 4: [Empty] | 5: [Empty] | 6: [Empty] | 7: [Active]{6} | 8: [Active]{20} | 9: [Empty] | 10: [Empty] | 11: [Empty] | 12: [Empty] | 13: [Empty]
+

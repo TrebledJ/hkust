@@ -1,0 +1,13 @@
+
+=== Test case 16 ===
+
+Testing LibraryItem Class below...
+Item: TestingLibraryItem published on 20201106(in stock)
+Library Item: TestingLibraryItem 20201106 (true)
+
+Testing Book Class below...
+Item: TestingBook published on 20201106(in stock)
+Book: Library 1F Section A
+Library Item: TestingBook 20201106 (true)
+
+Book TestingBook Destructed

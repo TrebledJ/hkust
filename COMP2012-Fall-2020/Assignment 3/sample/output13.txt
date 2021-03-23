@@ -1,0 +1,22 @@
+
+=== Test case 13 ===
+
+true
+true
+true
+true
+true
+true
+true
+true
+true
+		(z)
+						(y)
+				(w)
+(s)
+						(g)
+				(e)
+						(d)
+		(c)
+				(b)
+
