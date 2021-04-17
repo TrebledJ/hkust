@@ -3,13 +3,9 @@
 
 #include "config.h"
 
-#include <algorithm>
 #include <chrono>
-#include <cmath>
-#include <functional>
 #include <iomanip>
 #include <iostream>
-#include <memory>
 #include <numeric>
 #include <random>
 #include <vector>

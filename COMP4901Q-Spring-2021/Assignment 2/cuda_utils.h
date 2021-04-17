@@ -4,6 +4,9 @@
 
 #include "common_utils.h"
 
+#include <chrono>
+#include <memory>
+
 
 #if ENABLE_CUDA
 
