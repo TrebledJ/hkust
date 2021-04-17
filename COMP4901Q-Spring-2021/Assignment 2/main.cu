@@ -34,8 +34,7 @@ int main(int argc, char** argv)
 
     if (ctx.print_output)
     {
-        std::cout << "matrix:\n";
-        ctx.matrix.print();
+        std::cout << "matrix:\n" << ctx.matrix;
     } else
     {
         std::cout << std::endl;

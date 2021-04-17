@@ -19,8 +19,7 @@ void problem1(Context& ctx)
     ctx.vector.generate(RANDOM_LO, RANDOM_HI);
     if (ctx.print_output)
     {
-        std::cout << "\nInput: ";
-        ctx.vector.print();
+        std::cout << "\nInput: " << ctx.vector;
         std::cout << std::endl;
     }
 
