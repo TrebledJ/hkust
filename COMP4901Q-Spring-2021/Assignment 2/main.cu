@@ -4,9 +4,6 @@
 #include "utils.h"
 
 #include <vector>
-//
-#include "problem1.h"
-#include "problem2.h"
 
 
 using namespace Utils::Input;

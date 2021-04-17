@@ -1,12 +1,17 @@
+#include "context.h"
 #include "matrix.h"
-#include "problems.h"
 #include "utils.h"
+
+
+using namespace Utils::CUDA;
+using namespace Utils::Timing;
+
+
+#define BENCH_FUNCTION_1(name) TimerResult name(const Context& ctx, Vector& output)
 
 
 BENCH_FUNCTION_1(serial_mv_multiply)
 {
-    using namespace Utils::Timing;
-
     TimerResult timings{"Matrix-Vector Multiplication: Serial/CPU"};
 
     for (int i = 0; i < ctx.runs; i++)
@@ -76,9 +81,6 @@ __global__ void parallel_matvec2(float* matrix, float* vector, uint32_t row, uin
 
 BENCH_FUNCTION_1(parallel_mv_multiply)
 {
-    using namespace Utils::CUDA;
-    using namespace Utils::Timing;
-
     TimerResult timings{"Matrix-Vector Multiplication: Parallel/GPU"};
 
 #if ENABLE_CUDA
