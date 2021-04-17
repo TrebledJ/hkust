@@ -1,6 +1,3 @@
-# NOTE: This file is different from the .clang-format on
-#       Robocon-Meta. I implore you to keep it that way.
-#
 # Batch format:
 #  - Open the terminal at the project directory.
 #  - Run:
