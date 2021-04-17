@@ -16,9 +16,9 @@ void problem1(Context& ctx)
 {
     problem_header("Matrix-Vector Multiply");
 
+    ctx.vector.generate(RANDOM_LO, RANDOM_HI);
     if (ctx.print_output)
     {
-        ctx.vector.generate(RANDOM_LO, RANDOM_HI);
         std::cout << "\nInput: ";
         ctx.vector.print();
         std::cout << std::endl;
