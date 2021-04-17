@@ -87,9 +87,9 @@ BENCH_FUNCTION_1(parallel_mv_multiply)
     TimerResult timings{"Matrix-Vector Multiplication: Parallel/GPU"};
 
 #if ENABLE_CUDA
-    auto d_matrix = device_array<float>(ctx.matrix.data(), ctx.matrix.size());
-    auto d_vector = device_array<float>(ctx.vector.data(), ctx.vector.size());
-    auto d_result = device_array<float>(ctx.matrix.row);
+    auto d_matrix = DeviceArray<float>(ctx.matrix.data(), ctx.matrix.size());
+    auto d_vector = DeviceArray<float>(ctx.vector.data(), ctx.vector.size());
+    auto d_result = DeviceArray<float>(ctx.matrix.row);
 
     dim3 grid, block;
 

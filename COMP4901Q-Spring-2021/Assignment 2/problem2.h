@@ -50,8 +50,8 @@ BENCH_FUNCTION_2(parallel_transpose)
     TimerResult timings{"Matrix Transpose: Parallel/GPU"};
 
 #if ENABLE_CUDA
-    auto d_matrix = device_array<float>(ctx.matrix.data(), ctx.matrix.size());
-    auto d_result = device_array<float>(ctx.matrix.size());
+    auto d_matrix = DeviceArray<float>(ctx.matrix.data(), ctx.matrix.size());
+    auto d_result = DeviceArray<float>(ctx.matrix.size());
 
     dim3 grid, block;
     block.x = block.y = 16;
@@ -126,8 +126,8 @@ BENCH_FUNCTION_2(parallel_transpose_shared)
     TimerResult timings{"Matrix Transpose: Parallel/GPU (Shared)"};
 
 #if ENABLE_CUDA
-    auto d_matrix = device_array<float>(ctx.matrix.data(), ctx.matrix.size());
-    auto d_result = device_array<float>(ctx.matrix.size());
+    auto d_matrix = DeviceArray<float>(ctx.matrix.data(), ctx.matrix.size());
+    auto d_result = DeviceArray<float>(ctx.matrix.size());
 
     dim3 grid, block;
     block.y = TILE_SIZE;

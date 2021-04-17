@@ -65,36 +65,36 @@ namespace Utils
     }
 
         template <typename T>
-        using device_ptr = std::unique_ptr<T, decltype(&cudaFree)>;
+        using DevicePointer = std::unique_ptr<T, decltype(&cudaFree)>;
 
         template <typename T>
-        class device_array
+        class DeviceArray
         {
-            device_ptr<T> ptr;
+            DevicePointer<T> ptr;
             size_t size;
 
         public:
-            device_array(uint32_t len, T init = T{}) : ptr{nullptr, cudaFree}, size{len}
+            DeviceArray(uint32_t len, T init = T{}) : ptr{nullptr, cudaFree}, size{len}
             {
                 T* p;
                 CHECK(cudaMalloc((void**)&p, len * sizeof(T)));
                 CHECK(cudaMemset(p, init, len * sizeof(T)));
-                ptr = device_ptr<T>(p, cudaFree);
+                ptr = DevicePointer<T>(p, cudaFree);
             }
 
-            device_array(const T* copyfrom, uint32_t len) : ptr{nullptr, cudaFree}, size{len}
+            DeviceArray(const T* copyfrom, uint32_t len) : ptr{nullptr, cudaFree}, size{len}
             {
                 T* p;
                 CHECK(cudaMalloc((void**)&p, len * sizeof(T)));
                 CHECK(cudaMemcpy(p, copyfrom, len * sizeof(T), cudaMemcpyHostToDevice));
-                ptr = device_ptr<T>(p, cudaFree);
+                ptr = DevicePointer<T>(p, cudaFree);
             }
 
-            device_array(const device_array&) = delete;
-            device_array& operator=(const device_array&) = delete;
+            DeviceArray(const DeviceArray&) = delete;
+            DeviceArray& operator=(const DeviceArray&) = delete;
 
-            device_array(device_array&&) = default;
-            device_array& operator=(device_array&&) = default;
+            DeviceArray(DeviceArray&&) = default;
+            DeviceArray& operator=(DeviceArray&&) = default;
 
             void copy_to(T* dest, cudaMemcpyKind kind = cudaMemcpyDeviceToHost)
             {
