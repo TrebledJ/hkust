@@ -28,13 +28,13 @@ struct Data
 
     size_t size() const { return numbers.size(); }
 
-    bool operator==(const Data& other) const
+    friend bool operator==(const Data& lhs, const Data& rhs)
     {
-        if (numbers.size() != other.numbers.size())
+        if (lhs.numbers.size() != rhs.numbers.size())
             return false;
 
-        for (int i = 0; i < numbers.size(); i++)
-            if (fabs(numbers[i] - other.numbers[i]) > 1e-3)
+        for (int i = 0; i < lhs.numbers.size(); i++)
+            if (fabs(lhs.numbers[i] - rhs.numbers[i]) > 1e-3)
                 return false;
         return true;
     }
@@ -124,9 +124,9 @@ struct Matrix : Data
                 std::cout << std::setw(10) << numbers[i * col + j] << (j != col - 1 ? " " : "\n");
     }
 
-    bool operator==(const Matrix& other) const
+    friend bool operator==(const Matrix& lhs, const Matrix& rhs)
     {
-        return row == other.row && col == other.col && (Data&)(*this) == other;
+        return lhs.row == rhs.row && lhs.col == rhs.col && static_cast<const Data&>(lhs) == static_cast<const Data&>(rhs);
     }
 };
 
