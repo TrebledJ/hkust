@@ -28,7 +28,9 @@ void problem1(const Context& ctx)
         std::cout << std::endl;
 
         // Promote the context to one surrounding the problem.
-        ContextP1 ctxp1 = ctx;
+        ContextP1 ctxp1{ctx, static_cast<uint32_t>(m), static_cast<uint32_t>(k), static_cast<uint32_t>(n)};
+        if (m > 10 || k > 10 || n > 10)
+            ctxp1.print_output = false; // Override `print_output` setting if matrix is large.
 
         // Generate matrices.
         ctxp1.matrix_A.generate(RANDOM_LO, RANDOM_HI);
@@ -53,7 +55,7 @@ void problem1(const Context& ctx)
     else
     {
 #if ENABLE_MPI
-        ContextP1 ctxp1 = ctx;
+        ContextP1 ctxp1{ctx, 0, 0, 0}; // m, k, n unknown.
         Matrix output; // Matrix dimensions will be inited inside parallel_matmul.
         parallel_matmul(ctxp1, output);
 #endif

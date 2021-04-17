@@ -39,7 +39,7 @@ void parallel_common_matmul(const ContextP1& ctx, Matrix& output)
     // Note: The `output` matrix isn't used for non-root processes.
     // So technically, for id != 0, only the B matrix matters. The other matrices will be local.
 
-    Matrix local_A{ctx.matrix_A.row / ctx.num_procs, ctx.matrix_A.col};
+    Matrix local_A{ctx.m / ctx.num_procs, ctx.k};
 
     // Scatter row chunks of A.
     CHECK(MPI_Scatter(ctx.matrix_A.data(), local_A.size(), MPI_FLOAT, local_A.data(), local_A.size(), MPI_FLOAT, 0,
@@ -67,12 +67,12 @@ BENCH_FUNCTION_1(parallel_matmul)
         TimerResult timings{"Matrix-Matrix Multiplication: Parallel/MPI"};
 
         // Broadcast matrix dimensions.
-        CHECK(MPI_Bcast((void*)&ctx.matrix_A.row, 1, MPI_UINT32_T, 0, MPI_COMM_WORLD));
-        CHECK(MPI_Bcast((void*)&ctx.matrix_A.col, 1, MPI_UINT32_T, 0, MPI_COMM_WORLD));
-        CHECK(MPI_Bcast((void*)&ctx.matrix_B.col, 1, MPI_UINT32_T, 0, MPI_COMM_WORLD));
+        CHECK(MPI_Bcast((void*)&ctx.m, 1, MPI_UINT32_T, 0, MPI_COMM_WORLD));
+        CHECK(MPI_Bcast((void*)&ctx.k, 1, MPI_UINT32_T, 0, MPI_COMM_WORLD));
+        CHECK(MPI_Bcast((void*)&ctx.n, 1, MPI_UINT32_T, 0, MPI_COMM_WORLD));
 
         // Initialise output matrix size.
-        output.resize(ctx.matrix_A.row, ctx.matrix_B.col);
+        output.resize(ctx.m, ctx.n);
 
         for (int i = 0; i < ctx.num_runs; i++)
         {
@@ -101,8 +101,8 @@ BENCH_FUNCTION_1(parallel_matmul)
         CHECK(MPI_Bcast(&n, 1, MPI_UINT32_T, 0, MPI_COMM_WORLD));
 
         ContextP1 derived_ctx = ctx;
-        derived_ctx.matrix_A.row = m; // Internal container of `A` won't be used.
-        derived_ctx.matrix_A.col = k;
+        derived_ctx.m = m; // Internal container of `A` won't be used.
+        derived_ctx.k = k;
         derived_ctx.matrix_B.resize(k, n); // Resize `B` to prepare receiving data from broadcast.
 
         for (int i = 0; i < ctx.num_runs; i++)

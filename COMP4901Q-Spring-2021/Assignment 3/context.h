@@ -32,8 +32,20 @@ struct ContextP1 : Context
 {
     Matrix matrix_A;
     Matrix matrix_B;
+    uint32_t &m, k, n; // Convenience members for accessing matrix dimensions.
 
-    ContextP1(const Context& ctx) { static_cast<Context&>(*this) = ctx; }
+    ContextP1(uint32_t m, uint32_t k, uint32_t n)
+        : matrix_A{m, k}
+        , matrix_B{k, n}
+        , m{matrix_A.row}
+        , k{matrix_A.col}
+        , n{matrix_B.col}
+    {
+    }
+    ContextP1(const Context& ctx, uint32_t m, uint32_t k, uint32_t n) : ContextP1{m, k, n}
+    {
+        static_cast<Context&>(*this) = ctx;
+    }
 };
 
 
