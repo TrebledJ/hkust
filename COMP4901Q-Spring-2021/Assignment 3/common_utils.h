@@ -261,7 +261,7 @@ namespace Utils
             return read(x) && input_impl(xs...);
         }
 
-        template <typename Func, typename... Ts>
+        template <typename... Ts>
         void input(std::string prompt, Ts&... xs)
         {
             do
@@ -276,7 +276,7 @@ namespace Utils
             do
             {
                 std::cout << prompt;
-            } while (!input_impl(xs...) || (validator && !validator(xs...) && bad_read()));
+            } while (!input_impl(xs...) || (!validator(xs...) && bad_read()));
         }
     } // namespace Input
 } // namespace Utils

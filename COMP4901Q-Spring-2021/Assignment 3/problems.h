@@ -20,9 +20,11 @@ void problem1(const Context& ctx)
         problem_header("Matrix-Matrix Multiplication");
 
         int32_t m, k, n;
-        std::cout << "\nPlease enter the matrix dimensions.\n\n";
+        std::cout << "\nPlease enter the matrix dimensions. Note that m should be divisible by " << ctx.num_procs << "."
+                  << "\n\n";
         input(
-            "Matrix A: (<m> <k>) >>> ", [](int32_t m, int32_t k) { return m > 0 && k > 0; }, m, k);
+            "Matrix A: (<m> <k>) >>> ",
+            [&](int32_t m, int32_t k) { return m > 0 && k > 0 && (m % ctx.num_procs == 0); }, m, k);
         input(
             "Matrix B: ( k  <n>) >>> " + std::to_string(k) + " ", [](int32_t n) { return n > 0; }, n);
         std::cout << std::endl;
@@ -56,7 +58,7 @@ void problem1(const Context& ctx)
     {
 #if ENABLE_MPI
         ContextP1 ctxp1{ctx, 0, 0, 0}; // m, k, n unknown.
-        Matrix output; // Matrix dimensions will be inited inside parallel_matmul.
+        Matrix output;                 // Matrix dimensions will be inited inside parallel_matmul.
         parallel_matmul(ctxp1, output);
 #endif
     }
