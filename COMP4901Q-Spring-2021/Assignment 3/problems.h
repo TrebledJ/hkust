@@ -36,7 +36,7 @@ void problem1(const Context& ctx)
         ctxp1.matrix_A.generate(RANDOM_LO, RANDOM_HI);
         ctxp1.matrix_B.generate(RANDOM_LO, RANDOM_HI);
 
-        if (ctx.print_output)
+        if (ctxp1.print_output)
         {
             std::cout << "\nA:\n" << ctxp1.matrix_A;
             std::cout << "\nB:\n" << ctxp1.matrix_B;
