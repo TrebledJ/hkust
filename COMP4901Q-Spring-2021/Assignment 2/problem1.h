@@ -1,3 +1,6 @@
+#ifndef PROBLEM1_H
+#define PROBLEM1_H
+
 #include "context.h"
 #include "matrix.h"
 #include "utils.h"
@@ -123,3 +126,5 @@ BENCH_FUNCTION_1(parallel_mv_multiply)
 
     return timings;
 }
+
+#endif

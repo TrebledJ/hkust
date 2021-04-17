@@ -1,3 +1,6 @@
+#ifndef PROBLEM2_H
+#define PROBLEM2_H
+
 #include "context.h"
 #include "matrix.h"
 #include "utils.h"
@@ -150,3 +153,5 @@ BENCH_FUNCTION_2(parallel_transpose_shared)
 
     return timings;
 }
+
+#endif
