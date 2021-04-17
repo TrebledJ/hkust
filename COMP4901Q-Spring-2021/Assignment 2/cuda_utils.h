@@ -10,18 +10,33 @@
 
 #if ENABLE_CUDA
 
+#include <cuda.h>
+
+
 namespace Utils
 {
-
-    namespace Timing
+    namespace CUDA
     {
+
+// Macro to check for errors on CUDA API. Adapted from tutorial notes.
+#define CHECK(call)                                                          \
+    {                                                                        \
+        const cudaError_t error = call;                                      \
+        if (error != cudaSuccess)                                            \
+        {                                                                    \
+            printf("Error on %s:%d, code: %d\n", __FILE__, __LINE__, error); \
+            printf("Reason: %s\n", cudaGetErrorString(error));               \
+            exit(1);                                                         \
+        }                                                                    \
+    }
+
         class DeviceTimer
         {
-            TimerResult* res = nullptr;
+            Timing::TimerResult* res = nullptr;
             cudaEvent_t start, stop;
 
         public:
-            DeviceTimer(TimerResult* res = nullptr) : res{res}
+            DeviceTimer(Timing::TimerResult* res = nullptr) : res{res}
             {
                 cudaEventCreate(&start);
                 cudaEventCreate(&stop);
@@ -43,26 +58,10 @@ namespace Utils
                 if (res)
                     res->push(time);
                 else
-                    TimerResult::instance().push(time);
+                    Timing::TimerResult::instance().push(time);
             }
         };
-    } // namespace Timing
 
-
-    namespace CUDA
-    {
-
-// Macro to check for errors on CUDA API. Adapted from tutorial notes.
-#define CHECK(call)                                                          \
-    {                                                                        \
-        const cudaError_t error = call;                                      \
-        if (error != cudaSuccess)                                            \
-        {                                                                    \
-            printf("Error on %s:%d, code: %d\n", __FILE__, __LINE__, error); \
-            printf("Reason: %s\n", cudaGetErrorString(error));               \
-            exit(1);                                                         \
-        }                                                                    \
-    }
 
         template <typename T>
         using DevicePointer = std::unique_ptr<T, decltype(&cudaFree)>;
