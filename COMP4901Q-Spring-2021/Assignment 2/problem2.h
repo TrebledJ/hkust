@@ -17,7 +17,7 @@ BENCH_FUNCTION_2(serial_transpose)
 {
     TimerResult timings{"Matrix Transpose: Serial/CPU"};
 
-    for (int i = 0; i < ctx.runs; i++)
+    for (int i = 0; i < ctx.num_runs; i++)
     {
         Timer t{&timings};
         output = ctx.matrix.transposed();
@@ -58,7 +58,7 @@ BENCH_FUNCTION_2(parallel_transpose)
     grid.x = ceil(1.0 * ctx.matrix.col / block.x);
     grid.y = ceil(1.0 * ctx.matrix.row / block.y);
 
-    for (int i = 0; i < ctx.runs; i++)
+    for (int i = 0; i < ctx.num_runs; i++)
     {
         DeviceTimer t{&timings};
         parallel_transpose_process<<<grid, block>>>(d_matrix, ctx.matrix.row, ctx.matrix.col, d_result);
@@ -134,7 +134,7 @@ BENCH_FUNCTION_2(parallel_transpose_shared)
     grid.x = ceil(1.0 * ctx.matrix.col / TILE_SIZE);
     grid.y = ceil(1.0 * ctx.matrix.row / TILE_SIZE);
 
-    for (int i = 0; i < ctx.runs; i++)
+    for (int i = 0; i < ctx.num_runs; i++)
     {
         DeviceTimer t{&timings};
         parallel_transpose_shared_process<<<grid, block>>>(d_matrix, ctx.matrix.row, ctx.matrix.col, d_result);

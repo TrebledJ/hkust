@@ -16,7 +16,7 @@ int main(int argc, char** argv)
 
     Context ctx(row, col);
     ctx.matrix.generate(RANDOM_LO, RANDOM_HI);
-    ctx.runs = RUNS;
+    ctx.num_runs = RUNS;
 #ifdef PRINT_OUTPUT
     ctx.print_output = (col <= OUTPUT_COL_LIMIT || row <= OUTPUT_ROW_LIMIT);
 #else
@@ -24,7 +24,7 @@ int main(int argc, char** argv)
 #endif
 
     std::cout << "\n";
-    std::cout << "#runs: " << ctx.runs << "\n";
+    std::cout << "#runs: " << ctx.num_runs << "\n";
     std::cout << "#rows: " << row << "\n";
     std::cout << "#columns: " << col << "\n";
     std::cout << "matrix size: " << ctx.matrix.size() << "\n";

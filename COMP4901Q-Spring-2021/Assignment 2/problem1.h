@@ -17,7 +17,7 @@ BENCH_FUNCTION_1(serial_mv_multiply)
 {
     TimerResult timings{"Matrix-Vector Multiplication: Serial/CPU"};
 
-    for (int i = 0; i < ctx.runs; i++)
+    for (int i = 0; i < ctx.num_runs; i++)
     {
         Timer t{&timings};
         output = ctx.matrix.apply(ctx.vector);
@@ -95,7 +95,7 @@ BENCH_FUNCTION_1(parallel_mv_multiply)
 
     grid.x = 16;
     block.x = 64;
-    for (int i = 0; i < ctx.runs; i++)
+    for (int i = 0; i < ctx.num_runs; i++)
     {
         DeviceTimer t{&timings};
         parallel_matvec<<<grid, block>>>(d_matrix, d_vector, ctx.matrix.row, ctx.matrix.col, d_result);
@@ -106,7 +106,7 @@ BENCH_FUNCTION_1(parallel_mv_multiply)
     // grid.x = 16;
     // grid.y = 64;
     // block.x = ceil(1.0 * ctx.matrix.col / SEGMENT_SIZE);
-    // for (int i = 0; i < ctx.runs; i++)
+    // for (int i = 0; i < ctx.num_runs; i++)
     // {
     //     DeviceTimer t{&timings2};
     //     parallel_matvec2<<<grid, block>>>(d_matrix, d_vector, ctx.matrix.row, ctx.matrix.col, d_result);
