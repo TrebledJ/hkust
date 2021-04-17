@@ -13,11 +13,6 @@
 #include <cuda.h>
 
 
-namespace Utils
-{
-    namespace CUDA
-    {
-
 // Macro to check for errors on CUDA API. Adapted from tutorial notes.
 #define CHECK(call)                                                          \
     {                                                                        \
@@ -30,6 +25,10 @@ namespace Utils
         }                                                                    \
     }
 
+namespace Utils
+{
+    namespace CUDA
+    {
         class DeviceTimer
         {
             Timing::TimerResult* res = nullptr;
