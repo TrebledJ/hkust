@@ -16,7 +16,11 @@ struct Data
 
     Data(uint32_t size = 0) : numbers(size, 0.0) {}
 
-    void generate(float low, float high) { std::generate(numbers.begin(), numbers.end(), randfloat(low, high)); }
+    void generate(float low, float high)
+    {
+        using namespace Utils;
+        std::generate(numbers.begin(), numbers.end(), randfloat(low, high));
+    }
     void set(std::vector<float> xs) { std::copy(xs.begin(), xs.end(), numbers.begin()); }
 
     float* data() { return numbers.data(); }

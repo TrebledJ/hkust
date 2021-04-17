@@ -4,6 +4,8 @@
 
 BENCH_FUNCTION_2(serial_transpose)
 {
+    using namespace Utils::Timing;
+
     TimerResult timings{"Matrix Transpose: Serial/CPU"};
 
     for (int i = 0; i < ctx.runs; i++)
@@ -36,6 +38,9 @@ __global__ void parallel_transpose_process(float* matrix, uint32_t row, uint32_t
 
 BENCH_FUNCTION_2(parallel_transpose)
 {
+    using namespace Utils::CUDA;
+    using namespace Utils::Timing;
+
     TimerResult timings{"Matrix Transpose: Parallel/GPU"};
 
 #if ENABLE_CUDA
@@ -112,6 +117,9 @@ __global__ void parallel_transpose_shared_process(float* matrix, uint32_t row, u
 
 BENCH_FUNCTION_2(parallel_transpose_shared)
 {
+    using namespace Utils::CUDA;
+    using namespace Utils::Timing;
+
     TimerResult timings{"Matrix Transpose: Parallel/GPU (Shared)"};
 
 #if ENABLE_CUDA

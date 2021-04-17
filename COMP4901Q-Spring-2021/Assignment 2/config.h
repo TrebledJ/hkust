@@ -34,6 +34,3 @@
 #ifndef ENABLE_CUDA
 #define ENABLE_CUDA 1 // Enable by default.
 #endif
-
-#define CONSOLE_WIDTH       80
-#define TIMER_RESULT_INDENT 8

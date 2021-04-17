@@ -1,32 +1,15 @@
 #include "config.h"
 #include "matrix.h"
-#include "pa_utils.h"
+#include "problems.h"
 #include "utils.h"
 
 #include <vector>
-
-
-#if ENABLE_CUDA
-#include <cuda.h>
-
-#define CHECK(call)                                                          \
-    {                                                                        \
-        const cudaError_t error = call;                                      \
-        if (error != cudaSuccess)                                            \
-        {                                                                    \
-            printf("Error on %s:%d, code: %d\n", __FILE__, __LINE__, error); \
-            printf("Reason: %s\n", cudaGetErrorString(error));               \
-            exit(1);                                                         \
-        }                                                                    \
-    }
-
-#endif
-
-
-#include "problems.h"
 //
 #include "problem1.h"
 #include "problem2.h"
+
+
+using namespace Utils::Input;
 
 
 int main(int argc, char** argv)
@@ -56,8 +39,7 @@ int main(int argc, char** argv)
     {
         std::cout << "matrix:\n";
         ctx.matrix.print();
-    }
-    else
+    } else
     {
         std::cout << std::endl;
     }

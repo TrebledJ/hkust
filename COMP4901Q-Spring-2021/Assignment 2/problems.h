@@ -6,6 +6,10 @@
 
 #include <cassert>
 
+
+using namespace Utils::Timing;
+
+
 struct Context
 {
     Matrix matrix;
@@ -17,16 +21,13 @@ struct Context
     Context(uint32_t r, uint32_t c) : matrix{r, c}, vector(c), num_bytes(r * c * sizeof(float)) {}
 };
 
-#define BENCH_FUNCTION_1(name) \
-    TimerResult name(const Context& ctx, Vector& output)
-#define BENCH_FUNCTION_2(name) \
-    TimerResult name(const Context& ctx, Matrix& output)
+#define BENCH_FUNCTION_1(name) TimerResult name(const Context& ctx, Vector& output)
+#define BENCH_FUNCTION_2(name) TimerResult name(const Context& ctx, Matrix& output)
 
-#define BENCH_FUNCTION(problem, name) BENCH_FUNCTION_(problem, name)
-#define BENCH_FUNCTION_(problem, name) \
-    BENCH_FUNCTION_##problem(name)
+#define BENCH_FUNCTION(problem, name)  BENCH_FUNCTION_(problem, name)
+#define BENCH_FUNCTION_(problem, name) BENCH_FUNCTION_##problem(name)
 
-#define BENCH(var, output, func) \
+#define BENCH(var, output, func)        \
     BENCH_FUNCTION(CURR_PROBLEM, func); \
     auto var = func(ctx, output);
 
