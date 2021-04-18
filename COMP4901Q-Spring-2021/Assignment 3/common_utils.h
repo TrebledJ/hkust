@@ -270,7 +270,7 @@ namespace Utils
         {
             if (!(std::cin >> t))
             {
-                bad_read();
+                bad_read("parse failed");
                 return false;
             }
             return true;

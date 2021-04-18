@@ -27,17 +27,19 @@ void problem1(const Context& ctx)
                   << "\n"
                   << std::endl;
 
-        auto validator = [&](std::string& reason, int32_t m, int32_t k, int32_t n)
-        {
-            require(m > 0, "m should be positive");
-            require(k > 0, "k should be positive");
-            require(n > 0, "n should be positive");
+        input(
+            "(<m> <k> <n>) >>> ",
+            validator(int32_t m, int32_t k, int32_t n)
+            {
+                require(m > 0, "m should be positive");
+                require(k > 0, "k should be positive");
+                require(n > 0, "n should be positive");
 #if ENABLE_MPI
-            require(m % ctx.num_procs == 0, "m should be divisible by " + std::to_string(ctx.num_procs));
+                require(m % ctx.num_procs == 0, "m should be divisible by " + std::to_string(ctx.num_procs));
 #endif
-            return true;
-        };
-        input("(<m> <k> <n>) >>> ", validator, m, k, n);
+                return true;
+            },
+            m, k, n);
 
         // Output matrix size.
         std::cout << "\nMatrix size. A: " << m << " x " << k << " = " << m * k;
@@ -97,7 +99,9 @@ void problem2(const Context& ctx)
             validator(int32_t n)
             {
                 require(n > 0, "n should be positive");
+#if ENABLE_MPI
                 require(n % ctx.num_procs == 0, "n should be divisible by " + std::to_string(ctx.num_procs));
+#endif
                 return true;
             },
             n);
