@@ -32,6 +32,7 @@ BENCH_FUNCTION_1(serial_matmul)
 }
 
 
+#if ENABLE_MPI
 void parallel_matmul_impl(const ContextP1& ctx, Matrix& output)
 {
     // Note: The internal container of matrix `A` won't be used for slave processes. Only the .row and .col members.
@@ -56,6 +57,7 @@ void parallel_matmul_impl(const ContextP1& ctx, Matrix& output)
     CHECK(MPI_Gather(local_output.data(), local_output.size(), MPI_FLOAT, output.data(), local_output.size(), MPI_FLOAT,
                      0, MPI_COMM_WORLD));
 }
+#endif
 
 
 BENCH_FUNCTION_1(parallel_matmul)
