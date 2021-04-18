@@ -24,7 +24,8 @@ void problem1(const Context& ctx)
                   << ".\n"
                   << "\nMatrix A: m x k"
                   << "\n       B: k x n"
-                  << "\n\n";
+                  << "\n"
+                  << std::endl;
 
         auto validator = [&](std::string& reason, int32_t m, int32_t k, int32_t n)
         {
@@ -88,21 +89,24 @@ void problem2(const Context& ctx)
     {
         problem_header("Ring-Based AllReduce");
 
-        int32_t n;
+        std::cout << "\nPlease enter the array size. Note that this should be divisible by " << ctx.num_procs << ".\n"
+                  << std::endl;
+        int32_t n, op;
         input(
             "(<n>) >>> ",
             validator(int32_t n)
             {
                 require(n > 0, "n should be positive");
+                require(n % ctx.num_procs == 0, "n should be divisible by " + std::to_string(ctx.num_procs));
                 return true;
             },
             n);
 
-        int op;
+        std::cout << std::endl;
 
-        std::cout << "Please select the operation.\n";
-        std::cout << "  0. sum\n";
-        std::cout << "  1. max\n";
+        std::cout << "Please select the operation to perform.\n";
+        std::cout << "  0: sum\n";
+        std::cout << "  1: max\n" << std::endl;
         input(
             "(<op>) >>> ",
             validator(int op)
@@ -112,12 +116,18 @@ void problem2(const Context& ctx)
             },
             op);
 
-        ContextP2 ctxp2{static_cast<uint32_t>(n), ContextP2::Operation(op)};
+        ContextP2 ctxp2{static_cast<uint32_t>(n), static_cast<uint32_t>(op)};
         if (n > 20)
             ctxp2.print_output = false; // Don't print large arrays.
 
-        ctxp2.array.assign(n, 1.0f); // TODO: for testing only.
-        // ctxp2.array.generate(RANDOM_LO, RANDOM_HI);
+#if ENABLE_MPI
+        uint32_t op_uint32 = op;
+        CHECK(MPI_Bcast(&ctxp2.n, 1, MPI_UINT32_T, 0, MPI_COMM_WORLD));
+        CHECK(MPI_Bcast(&op_uint32, 1, MPI_UINT32_T, 0, MPI_COMM_WORLD));
+#endif
+
+        // ctxp2.array.assign(n, 1.0f); // TODO: for testing only.
+        ctxp2.array.generate(RANDOM_LO, RANDOM_HI);
 
         if (ctxp2.print_output)
         {
@@ -128,21 +138,27 @@ void problem2(const Context& ctx)
         float output_s, output_mpi, output_ring;
         const auto tr_s = serial_reduce(ctxp2, output_s);
         const auto tr_p_mpi = parallel_allreduce_mpi(ctxp2, output_mpi);
-        const auto tr_p_ring = parallel_allreduce_ring(ctxp2, output_ring);
+        // const auto tr_p_ring = parallel_allreduce_ring(ctxp2, output_ring);
 
         assert(fabs(output_s - output_mpi) < 1e-3 && "Problem 2: outputs don't match.");
-        assert(fabs(output_s - output_ring) < 1e-3 && "Problem 2: outputs don't match.");
-        assert(fabs(output_mpi - output_ring) < 1e-3 && "Problem 2: outputs don't match.");
+        // assert(fabs(output_s - output_ring) < 1e-3 && "Problem 2: outputs don't match.");
+        // assert(fabs(output_mpi - output_ring) < 1e-3 && "Problem 2: outputs don't match.");
+        std::cout << "  All outputs match.\n\n";
 
         tr_s.compare(tr_p_mpi);
-        tr_p_mpi.compare(tr_p_ring);
+        // tr_p_mpi.compare(tr_p_ring);
     }
     else
     {
 #if ENABLE_MPI
-        ContextP2 ctxp2{0, ContextP2::SUM}; // Inputs unknown.
+        uint32_t n, op;
+        CHECK(MPI_Bcast(&n, 1, MPI_UINT32_T, 0, MPI_COMM_WORLD));
+        CHECK(MPI_Bcast(&op, 1, MPI_UINT32_T, 0, MPI_COMM_WORLD));
+
+        ContextP2 ctxp2{n, op};
         float output; // Unused.
         parallel_allreduce_mpi(ctxp2, output);
+        // parallel_allreduce_ring(ctxp2, output);
 #endif
     }
 }

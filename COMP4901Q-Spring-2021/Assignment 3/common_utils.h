@@ -108,9 +108,6 @@ namespace Utils
 
                 // Calculate basic statistics.
                 const auto avg_ = avg();
-                const auto stddev_ = stddev();
-                const auto min_ = min();
-                const auto max_ = max();
 
                 // Scale up the unit based on time value of avg. Use nanoseconds if tiny, seconds if large.
                 std::string unit;
@@ -125,18 +122,18 @@ namespace Utils
                     unit = "s", factor = 1e9;
 
                 const auto real_avg = avg_.count() / factor;
-                const auto real_std = avg_.count() / factor;
-                const auto real_min = avg_.count() / factor;
-                const auto real_max = avg_.count() / factor;
+                const auto real_std = stddev().count() / factor;
+                const auto real_min = min().count() / factor;
+                const auto real_max = max().count() / factor;
 
                 int width = longest({real_avg, real_std, real_min, real_max});
 
                 std::cout << std::setprecision(3) << std::fixed;
                 std::cout << indent << "avg: " << std::setw(width) << real_avg << unit << "\n";
-                std::cout << indent.substr(0, indent.size() - 3) << "stddev: " << std::setw(width)
-                          << real_std / factor << unit << "\n";
-                std::cout << indent << "min: " << std::setw(width) << real_min / factor << unit << "\n";
-                std::cout << indent << "max: " << std::setw(width) << real_max / factor << unit << "\n";
+                std::cout << indent.substr(0, indent.size() - 3) << "stddev: " << std::setw(width) << real_std << unit
+                          << "\n";
+                std::cout << indent << "min: " << std::setw(width) << real_min << unit << "\n";
+                std::cout << indent << "max: " << std::setw(width) << real_max << unit << "\n";
                 std::cout << std::endl;
             }
 
@@ -189,7 +186,8 @@ namespace Utils
             }
 
         private:
-            static int longest(std::vector<double> v) {
+            static int longest(std::vector<double> v)
+            {
                 int max = 0;
                 for (const auto& f : v)
                 {
@@ -263,7 +261,7 @@ namespace Utils
             if (reason.empty())
                 std::cout << "Input rejected.\n" << std::endl;
             else
-                std::cout << "Input rejected: " << reason << "\n" << std::endl;
+                std::cout << "Input rejected: " << reason << ".\n" << std::endl;
             return true;
         }
 
@@ -314,7 +312,7 @@ namespace Utils
         }
 
 // Helper macros for writing validators.
-#define validator(...) [](std::string& reason, __VA_ARGS__)
+#define validator(...) [&](std::string & reason, __VA_ARGS__)
 #define require(condition, reason_) \
     do                              \
     {                               \

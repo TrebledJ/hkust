@@ -3,10 +3,17 @@
 #include "problems.h"
 #include "utils.h"
 
+#if ENABLE_MPI
+#include <mpi.h>
+#endif
+
 
 int main(int argc, char** argv)
 {
+#if ENABLE_MPI
     MPI_Init(&argc, &argv);
+    MPI_Errhandler_set(MPI_COMM_WORLD, MPI_ERRORS_RETURN);
+#endif
 
     // Initialise context. This also reads the MPI communicator size and rank.
     Context ctx;
@@ -26,5 +33,7 @@ int main(int argc, char** argv)
     problem2(ctx);
 #endif
 
+#if ENABLE_MPI
     MPI_Finalize();
+#endif
 }

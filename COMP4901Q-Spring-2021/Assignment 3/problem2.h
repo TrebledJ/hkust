@@ -49,6 +49,30 @@ BENCH_FUNCTION_2(serial_reduce)
     return timings;
 }
 
+
+#define checkpoint(n) std::cout << ctx.mpi_id << ": cp" << n << std::endl;
+
+float parallel_allreduce_mpi_impl(const ContextP2& ctx)
+{
+    Vector local_arr{ctx.n / ctx.num_procs};
+
+    // Distribute the array.
+    CHECK(MPI_Scatter(ctx.array.data(), local_arr.size(), MPI_FLOAT, local_arr.data(), local_arr.size(), MPI_FLOAT, 0,
+                      MPI_COMM_WORLD));
+
+    // Do the thing!
+    float local_sum = 0;
+    for (int i = 0; i < local_arr.size(); i++)
+        local_sum += local_arr[i];
+
+    // Aggregate the sums.
+    float sum = 0;
+    CHECK(MPI_Allreduce(&local_sum, &sum, 1, MPI_FLOAT, MPI_SUM, MPI_COMM_WORLD));
+
+    return sum;
+}
+
+
 BENCH_FUNCTION_2(parallel_allreduce_mpi)
 {
     using namespace Utils::Timing;
@@ -58,6 +82,14 @@ BENCH_FUNCTION_2(parallel_allreduce_mpi)
     if (ctx.mpi_id == MASTER)
     {
         TimerResult timings{"Array Reduction: Parallel/MPI"};
+
+        for (int i = 0; i < ctx.num_runs; i++)
+        {
+            CHECK(MPI_Barrier(MPI_COMM_WORLD)); // Sync processes.
+
+            Timer timer{&timings};
+            output = parallel_allreduce_mpi_impl(ctx);
+        }
 
         timings.show();
 
@@ -70,12 +102,18 @@ BENCH_FUNCTION_2(parallel_allreduce_mpi)
     }
     else
     {
+        for (int i = 0; i < ctx.num_runs; i++)
+        {
+            CHECK(MPI_Barrier(MPI_COMM_WORLD));
+            parallel_allreduce_mpi_impl(ctx);
+        }
     }
 
 #endif
 
     return TimerResult{};
 }
+
 
 BENCH_FUNCTION_2(parallel_allreduce_ring)
 {
@@ -93,7 +131,7 @@ BENCH_FUNCTION_2(parallel_allreduce_ring)
         {
             std::cout << "  Output: " << output << "\n" << std::endl;
         }
-        
+
         return timings;
     }
     else

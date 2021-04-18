@@ -31,7 +31,8 @@ BENCH_FUNCTION_1(serial_matmul)
     return timings;
 }
 
-void parallel_common_matmul(const ContextP1& ctx, Matrix& output)
+
+void parallel_matmul_impl(const ContextP1& ctx, Matrix& output)
 {
     // Note: The internal container of matrix `A` won't be used for slave processes. Only the .row and .col members.
     // Note: The `output` matrix isn't used for slave processes.
@@ -56,10 +57,11 @@ void parallel_common_matmul(const ContextP1& ctx, Matrix& output)
                      0, MPI_COMM_WORLD));
 }
 
+
 BENCH_FUNCTION_1(parallel_matmul)
 {
     using namespace Utils::Timing;
-    
+
 #if ENABLE_MPI
     using namespace Utils::MPI;
 
@@ -69,6 +71,7 @@ BENCH_FUNCTION_1(parallel_matmul)
         TimerResult timings{"Matrix-Matrix Multiplication: Parallel/MPI"};
 
         // Broadcast matrix dimensions.
+        // TODO: broadcast from caller in problems.h
         CHECK(MPI_Bcast((void*)&ctx.m, 1, MPI_UINT32_T, 0, MPI_COMM_WORLD));
         CHECK(MPI_Bcast((void*)&ctx.k, 1, MPI_UINT32_T, 0, MPI_COMM_WORLD));
         CHECK(MPI_Bcast((void*)&ctx.n, 1, MPI_UINT32_T, 0, MPI_COMM_WORLD));
@@ -81,7 +84,7 @@ BENCH_FUNCTION_1(parallel_matmul)
             CHECK(MPI_Barrier(MPI_COMM_WORLD)); // Enter and synchronise between loops, for more precise timing.
 
             MPITimer timer{&timings};
-            parallel_common_matmul(ctx, output);
+            parallel_matmul_impl(ctx, output);
         }
 
         timings.show();
@@ -103,14 +106,13 @@ BENCH_FUNCTION_1(parallel_matmul)
         CHECK(MPI_Bcast(&n, 1, MPI_UINT32_T, 0, MPI_COMM_WORLD));
 
         ContextP1 derived_ctx = ctx;
-        derived_ctx.m = m; // Internal container of `A` won't be used.
-        derived_ctx.k = k;
+        derived_ctx.m = m;                 // Internal container of `A` won't be used, so just directly set the row/col.
         derived_ctx.matrix_B.resize(k, n); // Resize `B` to prepare receiving data from broadcast.
 
         for (int i = 0; i < ctx.num_runs; i++)
         {
             CHECK(MPI_Barrier(MPI_COMM_WORLD));
-            parallel_common_matmul(derived_ctx, output);
+            parallel_matmul_impl(derived_ctx, output);
         }
     }
 #endif

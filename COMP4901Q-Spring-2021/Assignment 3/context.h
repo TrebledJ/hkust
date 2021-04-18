@@ -54,9 +54,11 @@ struct ContextP2 : Context
     };
 
     Vector array;
+    uint32_t n;
     Operation op;
 
-    ContextP2(uint32_t n, Operation op) : Context{}, array{n}, op{op} {}
+    ContextP2(uint32_t n, Operation op) : Context{}, array{n}, n{n}, op{op} {}
+    ContextP2(uint32_t n, uint32_t op) : ContextP2{n, static_cast<Operation>(op)} {}
 };
 
 #endif
