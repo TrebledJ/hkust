@@ -2,6 +2,7 @@
 #define CONTEXT_H
 
 #include "config.h"
+#include "matrix.h"
 
 #if ENABLE_MPI
 #include <mpi.h>
@@ -42,11 +43,20 @@ struct ContextP1 : Context
         , n{matrix_B.col}
     {
     }
-    ContextP1(const Context& ctx, uint32_t m, uint32_t k, uint32_t n) : ContextP1{m, k, n}
-    {
-        static_cast<Context&>(*this) = ctx;
-    }
 };
 
+struct ContextP2 : Context
+{
+    enum Operation
+    {
+        SUM,
+        MAX
+    };
+
+    Vector array;
+    Operation op;
+
+    ContextP2(uint32_t n, Operation op) : Context{}, array{n}, op{op} {}
+};
 
 #endif

@@ -58,9 +58,10 @@ void parallel_common_matmul(const ContextP1& ctx, Matrix& output)
 
 BENCH_FUNCTION_1(parallel_matmul)
 {
+    using namespace Utils::Timing;
+    
 #if ENABLE_MPI
     using namespace Utils::MPI;
-    using namespace Utils::Timing;
 
     if (ctx.mpi_id == MASTER)
     {

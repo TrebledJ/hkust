@@ -9,7 +9,7 @@
 #include <mpi.h>
 
 
-// Macro to check for errors on CUDA API. Adapted from tutorial notes.
+// Macro to check for errors on MPI API.
 #define CHECK(call)                                                          \
     {                                                                        \
         const int error = call;                                              \
