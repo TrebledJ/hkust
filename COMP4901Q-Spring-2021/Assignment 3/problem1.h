@@ -6,15 +6,13 @@
 #include "utils.h"
 
 
-using namespace Utils::MPI;
-using namespace Utils::Timing;
-
-
-#define BENCH_FUNCTION_1(func) TimerResult func(const ContextP1& ctx, Matrix& output)
+#define BENCH_FUNCTION_1(func) Utils::Timing::TimerResult func(const ContextP1& ctx, Matrix& output)
 
 
 BENCH_FUNCTION_1(serial_matmul)
 {
+    using namespace Utils::Timing;
+
     TimerResult timings{"Matrix-Matrix Multiplication: Serial/CPU"};
 
     for (int i = 0; i < ctx.num_runs; i++)
@@ -35,8 +33,8 @@ BENCH_FUNCTION_1(serial_matmul)
 
 void parallel_common_matmul(const ContextP1& ctx, Matrix& output)
 {
-    // Note: The internal container of matrix `A` won't be used for non-root processes. Only the .row and .col members.
-    // Note: The `output` matrix isn't used for non-root processes.
+    // Note: The internal container of matrix `A` won't be used for slave processes. Only the .row and .col members.
+    // Note: The `output` matrix isn't used for slave processes.
     // So technically, for id != 0, only the B matrix matters. The other matrices will be local.
 
     Matrix local_A{ctx.m / ctx.num_procs, ctx.k};
@@ -61,7 +59,10 @@ void parallel_common_matmul(const ContextP1& ctx, Matrix& output)
 BENCH_FUNCTION_1(parallel_matmul)
 {
 #if ENABLE_MPI
-    if (ctx.mpi_id == 0)
+    using namespace Utils::MPI;
+    using namespace Utils::Timing;
+
+    if (ctx.mpi_id == MASTER)
     {
         // Time measurements will be done from the root process.
         TimerResult timings{"Matrix-Matrix Multiplication: Parallel/MPI"};
@@ -110,8 +111,6 @@ BENCH_FUNCTION_1(parallel_matmul)
             CHECK(MPI_Barrier(MPI_COMM_WORLD));
             parallel_common_matmul(derived_ctx, output);
         }
-
-        return TimerResult{};
     }
 #endif
 

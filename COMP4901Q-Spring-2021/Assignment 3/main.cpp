@@ -11,7 +11,7 @@ int main(int argc, char** argv)
     // Initialise context. This also reads the MPI communicator size and rank.
     Context ctx;
 
-    if (ctx.mpi_id == 0)
+    if (ctx.mpi_id == MASTER)
     {
         std::cout << "\n";
         std::cout << "#runs: " << ctx.num_runs << "\n";

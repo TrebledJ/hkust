@@ -32,6 +32,8 @@ namespace Utils
 {
     namespace MPI
     {
+        // Technically, since each process is localised, MPITimer doesn't offer much over the Timer class.
+        // Judging from the results, there's actually very little time difference between the two.
         class MPITimer
         {
             Timing::TimerResult* res = nullptr;

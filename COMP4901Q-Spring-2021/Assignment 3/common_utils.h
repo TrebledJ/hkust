@@ -113,9 +113,9 @@ namespace Utils
                 // Scale up the unit based on time value of avg. Use nanoseconds if tiny, seconds if large.
                 std::string unit;
                 float factor;
-                if (avg_ < std::chrono::nanoseconds(100))
+                if (avg_ < std::chrono::nanoseconds(500))
                     unit = "ns", factor = 1;
-                else if (avg_ < std::chrono::microseconds(100))
+                else if (avg_ < std::chrono::microseconds(500))
                     unit = "us", factor = 1e3;
                 else if (avg_ < std::chrono::milliseconds(500))
                     unit = "ms", factor = 1e6;
@@ -123,11 +123,11 @@ namespace Utils
                     unit = "s", factor = 1e9;
 
                 std::cout << std::setprecision(3) << std::fixed;
-                std::cout << indent << "avg: " << avg_.count() / factor << unit << "\n";
-                std::cout << indent.substr(0, indent.size() - 3) << "stddev: " << stddev_.count() / factor << unit
-                          << "\n";
-                std::cout << indent << "min: " << min_.count() / factor << unit << "\n";
-                std::cout << indent << "max: " << max_.count() / factor << unit << "\n";
+                std::cout << indent << "avg: " << std::setw(12) << avg_.count() / factor << unit << "\n";
+                std::cout << indent.substr(0, indent.size() - 3) << "stddev: " << std::setw(12)
+                          << stddev_.count() / factor << unit << "\n";
+                std::cout << indent << "min: " << std::setw(12) << min_.count() / factor << unit << "\n";
+                std::cout << indent << "max: " << std::setw(12) << max_.count() / factor << unit << "\n";
                 std::cout << std::endl;
             }
 
@@ -135,7 +135,7 @@ namespace Utils
             {
                 if (null)
                     return;
-                    
+
                 const std::string indent(TIMER_RESULT_INDENT, ' ');
 
                 std::cout << std::setprecision(3) << std::fixed;
@@ -146,9 +146,10 @@ namespace Utils
                 const auto spdup_max = 1.0 * max().count() / other.min().count();
 
                 std::cout << indent.substr(0, indent.size() - 2) << "Speedup:\n";
-                std::cout << indent << "avg: " << spdup_avg << " (" << (spdup_avg > 1.0 ? '+' : '-') << ")\n";
-                std::cout << indent << "min: " << spdup_min << "\n";
-                std::cout << indent << "max: " << spdup_max << "\n";
+                std::cout << indent << "avg: " << std::setw(12) << spdup_avg << " (" << (spdup_avg > 1.0 ? '+' : '-')
+                          << ")\n";
+                std::cout << indent << "min: " << std::setw(12) << spdup_min << "\n";
+                std::cout << indent << "max: " << std::setw(12) << spdup_max << "\n";
                 std::cout << std::endl;
             }
 
@@ -228,13 +229,16 @@ namespace Utils
     };
 
 
-    namespace Input
+    namespace IO
     {
-        bool bad_read()
+        bool bad_read(const std::string& reason = "")
         {
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cout << "Input rejected.\n" << std::endl;
+            if (reason.empty())
+                std::cout << "Input rejected.\n" << std::endl;
+            else
+                std::cout << "Input rejected: " << reason << "\n" << std::endl;
             return true;
         }
 
@@ -270,15 +274,32 @@ namespace Utils
             } while (!input_impl(xs...));
         }
 
+        /**
+         * @brief   Input function that accepts a validator. The validator's signature should be
+         *          bool(string&, const Ts&...), where Ts... are the types of the input arguments.
+         */
         template <typename Func, typename... Ts>
         void input(std::string prompt, Func validator, Ts&... xs)
         {
+            std::string reason;
             do
             {
                 std::cout << prompt;
-            } while (!input_impl(xs...) || (!validator(xs...) && bad_read()));
+            } while (!input_impl(xs...) || (!validator(reason, xs...) && bad_read(reason)));
         }
-    } // namespace Input
+
+// Helper macro for writing validators, to check if a condition holds.
+#define require(condition, reason_) \
+    do                              \
+    {                               \
+        if (!(condition))           \
+        {                           \
+            reason = reason_;       \
+            return false;           \
+        }                           \
+    } while (0)
+
+    } // namespace IO
 } // namespace Utils
 
 #endif

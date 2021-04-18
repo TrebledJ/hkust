@@ -1,6 +1,7 @@
 #ifndef PROBLEMS_H
 #define PROBLEMS_H
 
+#include "config.h"
 #include "context.h"
 #include "problem1.h"
 #include "problem2.h"
@@ -8,28 +9,40 @@
 
 #include <cassert>
 
-using namespace Utils::Input;
-using namespace Utils::Timing;
-
 
 void problem1(const Context& ctx)
 {
-    // Read input.
-    if (ctx.mpi_id == 0)
+    using namespace Utils::IO;
+
+    if (ctx.mpi_id == MASTER)
     {
         problem_header("Matrix-Matrix Multiplication");
 
+        // Read input.
         int32_t m, k, n;
-        std::cout << "\nPlease enter the matrix dimensions. Note that m should be divisible by " << ctx.num_procs << "."
+        std::cout << "\nPlease enter the matrix dimensions. Note that m should be divisible by " << ctx.num_procs
+                  << ".\n"
+                  << "\nMatrix A: m x k"
+                  << "\n       B: k x n"
                   << "\n\n";
-        input(
-            "Matrix A: (<m> <k>) >>> ",
-            [&](int32_t m, int32_t k) { return m > 0 && k > 0 && (m % ctx.num_procs == 0); }, m, k);
-        input(
-            "Matrix B: ( k  <n>) >>> " + std::to_string(k) + " ", [](int32_t n) { return n > 0; }, n);
+
+        auto validator = [&](std::string& reason, int32_t m, int32_t k, int32_t n)
+        {
+            require(m > 0, "m should be positive.");
+            require(k > 0, "k should be positive.");
+            require(n > 0, "n should be positive.");
+            require(m % ctx.num_procs == 0, "m should be divisible by " + std::to_string(ctx.num_procs));
+            return true;
+        };
+        input("(<m> <k> <n>) >>> ", validator, m, k, n);
+
+        // Output matrix size.
+        std::cout << "\nMatrix size. A: " << m << " x " << k << " = " << m * k;
+        std::cout << "\n             B: " << k << " x " << n << " = " << k * n;
+        std::cout << "\n           out: " << m << " x " << n << " = " << m * n;
         std::cout << std::endl;
 
-        // Promote the context to one surrounding the problem.
+        // Promote the context to ContextP1, which includes info about the problem.
         ContextP1 ctxp1{ctx, static_cast<uint32_t>(m), static_cast<uint32_t>(k), static_cast<uint32_t>(n)};
         if (m > 10 || k > 10 || n > 10)
             ctxp1.print_output = false; // Override `print_output` setting if matrix is large.
@@ -42,9 +55,10 @@ void problem1(const Context& ctx)
         {
             std::cout << "\nA:\n" << ctxp1.matrix_A;
             std::cout << "\nB:\n" << ctxp1.matrix_B;
-            std::cout << std::endl;
         }
+        std::cout << std::endl;
 
+        // All the actual timing is here!
         Matrix output_s, output_p;
         const auto tr_s = serial_matmul(ctxp1, output_s);
         const auto tr_p = parallel_matmul(ctxp1, output_p);
@@ -66,7 +80,9 @@ void problem1(const Context& ctx)
 
 void problem2(const Context& ctx)
 {
-    if (ctx.mpi_id == 0)
+    using namespace Utils::IO;
+    
+    if (ctx.mpi_id == MASTER)
     {
         problem_header("Ring-Based AllReduce");
     }

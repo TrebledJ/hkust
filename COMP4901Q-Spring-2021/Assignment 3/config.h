@@ -1,12 +1,12 @@
 #ifndef RUNS
-#define RUNS 1
+#define RUNS 10
 #elif RUNS <= 0
 #error "Number of runs should be a positive integer."
 #endif
 
-// #ifndef PRINT_OUTPUT
-#define PRINT_OUTPUT 1 // Not recommended for many runs or large input.
-// #endif
+#ifndef PRINT_OUTPUT
+#define PRINT_OUTPUT 0 // Off by default.
+#endif
 
 #ifndef PROBLEM
 #define RUN_PROBLEM_1
@@ -34,3 +34,5 @@
 #ifndef ENABLE_MPI
 #define ENABLE_MPI 1 // Enable by default.
 #endif
+
+#define MASTER 0 // Master process.

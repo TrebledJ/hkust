@@ -1,13 +1,12 @@
-# COMP4901Q: Assignment 2
+# COMP4901Q: Assignment 3
 ## Compiling
-This is the basic command to compile and run the program.
+This is the basic command to compile and run the program. Ensure that the hosts in the hostfile are known hosts.
 
-<!-- TODO -->
 ```
-$ 
+$ mpic++ -std=c++11 main.cpp -D PRINT_OUTPUT && mpiexec --hostfile hostfile -n 8 ./a.out
 ```
 
-You can define the following macros (as compile flags) to test various configurations:
+Configure the program by specifying the following compilation flags:
 * `-D RUNS=100`. Specify the number of runs. By default, this value is 10.
 * `-D PROBLEM=1`. Specify which problems to run. You can run both problems by using `-D PROBLEM=12`. By default, both problems 1 and 2 are run.
 * `-D PRINT_OUTPUT`. Controls whether output is printed. However, even if activated, output will only be printed if the input is small to avoid cluttering the terminal.
@@ -17,3 +16,15 @@ You can define the following macros (as compile flags) to test various configura
 ## Running
 
 <!-- TODO -->
+
+
+<!--
+Useful SSH Commands:
+```
+ssh user@host
+scp -r . user@host:/destination/path
+ssh-keygen -q -t rsa -N "" -f ~/.ssh/id_rsa
+ssh-copy-id user@host
+ssh -o StrictHostKeyChecking=no host
+```
+-->
