@@ -67,6 +67,7 @@ struct Vector : Data
 
     void print() const
     {
+        std::cout << std::setprecision(3) << std::fixed;
         std::cout << "[";
         if (numbers.empty())
             std::cout << "(empty)\n";

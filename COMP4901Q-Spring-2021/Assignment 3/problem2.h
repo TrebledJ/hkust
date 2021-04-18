@@ -19,24 +19,20 @@ BENCH_FUNCTION_2(serial_reduce)
     {
         Timer timer{&timings};
 
-        Vector v = ctx.array; // Make a copy.
-
-        // Perform the log2 magic.
+        // Do the thing!
         if (ctx.op == ContextP2::SUM)
         {
-            for (int stride = 1; stride < v.size(); stride <<= 1)
-                for (int i = 0; i + stride < v.size(); i += (stride << 1))
-                    v[i] += v[i + stride];
+            output = 0.0;
+            for (int i = 0; i < ctx.array.size(); i++)
+                output += ctx.array[i];
         }
         else if (ctx.op == ContextP2::MAX)
         {
-            for (int stride = 1; stride < v.size(); stride <<= 1)
-                for (int i = 0; i + stride < v.size(); i += (stride << 1))
-                    if (v[i + stride] > v[i])
-                        v[i] = v[i + stride];
+            output = -9e99;
+            for (int i = 0; i < ctx.array.size(); i++)
+                if (ctx.array[i] > output)
+                    output = ctx.array[i];
         }
-
-        output = v[0];
     }
 
     timings.show();
@@ -52,6 +48,9 @@ BENCH_FUNCTION_2(serial_reduce)
 
 float parallel_allreduce_mpi_impl(const ContextP2& ctx)
 {
+    // Very simple, we'll first scatter the data. Each process does their own computation, then the
+    // data is collated using Allreduce.
+
     Vector local_arr{ctx.n / ctx.num_procs};
 
     // Distribute the array.
@@ -59,17 +58,29 @@ float parallel_allreduce_mpi_impl(const ContextP2& ctx)
                       MPI_COMM_WORLD));
 
     // Do the thing!
-    float local_sum = 0;
-    for (int i = 0; i < local_arr.size(); i++)
-        local_sum += local_arr[i];
+    float local_res;
+    if (ctx.op == ContextP2::SUM)
+    {
+        local_res = 0.0;
+        for (int i = 0; i < local_arr.size(); i++)
+            local_res += local_arr[i];
+    }
+    else
+    {
+        local_res = -9e99;
+        for (int i = 0; i < local_arr.size(); i++)
+            if (local_arr[i] > local_res)
+                local_res = local_arr[i];
+    }
 
-    // Aggregate the sums.
-    float sum = 0;
-    CHECK(MPI_Allreduce(&local_sum, &sum, 1, MPI_FLOAT, MPI_SUM, MPI_COMM_WORLD));
+    // Aggregate the results.
+    const MPI_Op op = (ctx.op == ContextP2::SUM ? MPI_SUM : ctx.op == ContextP2::MAX ? MPI_MAX : MPI_OP_NULL);
 
-    return sum;
+    float res = 0.0;
+    CHECK(MPI_Allreduce(&local_res, &res, 1, MPI_FLOAT, op, MPI_COMM_WORLD));
+
+    return res;
 }
-
 
 BENCH_FUNCTION_2(parallel_allreduce_mpi)
 {
@@ -112,6 +123,10 @@ BENCH_FUNCTION_2(parallel_allreduce_mpi)
     return TimerResult{};
 }
 
+
+float parallel_allreduce_ring_impl()
+{
+}
 
 BENCH_FUNCTION_2(parallel_allreduce_ring)
 {

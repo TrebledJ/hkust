@@ -81,10 +81,11 @@ void problem2(const Context& ctx)
         auto ctxp2 = ContextP2::get(ctx);
 
         // Output array size.
-        std::cout << "\n" << "  Array size: " << ctxp2.n << std::endl;
+        std::cout << "\n"
+                  << "  Array size: " << ctxp2.n << std::endl;
         if (ctxp2.print_output)
             std::cout << "  Array: " << ctxp2.array << std::endl;
-        
+
         std::cout << std::endl;
 
 #if ENABLE_MPI
