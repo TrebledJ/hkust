@@ -50,8 +50,6 @@ BENCH_FUNCTION_2(serial_reduce)
 }
 
 
-#define checkpoint(n) std::cout << ctx.mpi_id << ": cp" << n << std::endl;
-
 float parallel_allreduce_mpi_impl(const ContextP2& ctx)
 {
     Vector local_arr{ctx.n / ctx.num_procs};
