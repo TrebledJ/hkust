@@ -55,8 +55,8 @@ void problem1(const Context& ctx)
 
         if (ctxp1.print_output)
         {
-            std::cout << "\nA:\n" << ctxp1.matrix_A;
-            std::cout << "\nB:\n" << ctxp1.matrix_B;
+            std::cout << "\n  A:\n" << ctxp1.matrix_A;
+            std::cout << "\n  B:\n" << ctxp1.matrix_B;
         }
         std::cout << std::endl;
 
@@ -112,7 +112,7 @@ void problem2(const Context& ctx)
             },
             op);
 
-        ContextP2 ctxp2{static_cast<uint32_t>(n), op};
+        ContextP2 ctxp2{static_cast<uint32_t>(n), ContextP2::Operation(op)};
         if (n > 20)
             ctxp2.print_output = false; // Don't print large arrays.
 

@@ -8,6 +8,8 @@
 #include <iostream>
 #include <numeric>
 #include <random>
+#include <sstream>
+#include <string>
 #include <vector>
 
 
@@ -122,12 +124,19 @@ namespace Utils
                 else
                     unit = "s", factor = 1e9;
 
+                const auto real_avg = avg_.count() / factor;
+                const auto real_std = avg_.count() / factor;
+                const auto real_min = avg_.count() / factor;
+                const auto real_max = avg_.count() / factor;
+
+                int width = longest({real_avg, real_std, real_min, real_max});
+
                 std::cout << std::setprecision(3) << std::fixed;
-                std::cout << indent << "avg: " << std::setw(12) << avg_.count() / factor << unit << "\n";
-                std::cout << indent.substr(0, indent.size() - 3) << "stddev: " << std::setw(12)
-                          << stddev_.count() / factor << unit << "\n";
-                std::cout << indent << "min: " << std::setw(12) << min_.count() / factor << unit << "\n";
-                std::cout << indent << "max: " << std::setw(12) << max_.count() / factor << unit << "\n";
+                std::cout << indent << "avg: " << std::setw(width) << real_avg << unit << "\n";
+                std::cout << indent.substr(0, indent.size() - 3) << "stddev: " << std::setw(width)
+                          << real_std / factor << unit << "\n";
+                std::cout << indent << "min: " << std::setw(width) << real_min / factor << unit << "\n";
+                std::cout << indent << "max: " << std::setw(width) << real_max / factor << unit << "\n";
                 std::cout << std::endl;
             }
 
@@ -145,11 +154,13 @@ namespace Utils
                 const auto spdup_min = 1.0 * min().count() / other.max().count();
                 const auto spdup_max = 1.0 * max().count() / other.min().count();
 
+                int width = longest({spdup_avg, spdup_min, spdup_max});
+
                 std::cout << indent.substr(0, indent.size() - 2) << "Speedup:\n";
-                std::cout << indent << "avg: " << std::setw(12) << spdup_avg << " (" << (spdup_avg > 1.0 ? '+' : '-')
+                std::cout << indent << "avg: " << std::setw(width) << spdup_avg << " (" << (spdup_avg > 1.0 ? '+' : '-')
                           << ")\n";
-                std::cout << indent << "min: " << std::setw(12) << spdup_min << "\n";
-                std::cout << indent << "max: " << std::setw(12) << spdup_max << "\n";
+                std::cout << indent << "min: " << std::setw(width) << spdup_min << "\n";
+                std::cout << indent << "max: " << std::setw(width) << spdup_max << "\n";
                 std::cout << std::endl;
             }
 
@@ -175,6 +186,20 @@ namespace Utils
             {
                 static TimerResult base{"Global"};
                 return base;
+            }
+
+        private:
+            static int longest(std::vector<double> v) {
+                int max = 0;
+                for (const auto& f : v)
+                {
+                    std::stringstream ss;
+                    ss << std::setprecision(3) << std::fixed << f;
+                    int len = ss.str().size();
+                    if (len > max)
+                        max = len;
+                }
+                return max;
             }
         };
 
@@ -288,7 +313,8 @@ namespace Utils
             } while (!input_impl(xs...) || (!validator(reason, xs...) && bad_read(reason)));
         }
 
-// Helper macro for writing validators, to check if a condition holds.
+// Helper macros for writing validators.
+#define validator(...) [](std::string& reason, __VA_ARGS__)
 #define require(condition, reason_) \
     do                              \
     {                               \

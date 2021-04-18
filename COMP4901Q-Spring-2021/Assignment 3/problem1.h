@@ -25,7 +25,7 @@ BENCH_FUNCTION_1(serial_matmul)
 
     if (ctx.print_output)
     {
-        std::cout << "Output:\n" << output << std::endl;
+        std::cout << "  Output:\n" << output << std::endl;
     }
 
     return timings;
@@ -88,7 +88,7 @@ BENCH_FUNCTION_1(parallel_matmul)
 
         if (ctx.print_output)
         {
-            std::cout << "Output:\n" << output << std::endl;
+            std::cout << "  Output:\n" << output << std::endl;
         }
 
         return timings;

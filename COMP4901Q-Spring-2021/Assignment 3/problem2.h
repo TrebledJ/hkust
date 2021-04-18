@@ -41,6 +41,11 @@ BENCH_FUNCTION_2(serial_reduce)
 
     timings.show();
 
+    if (ctx.print_output)
+    {
+        std::cout << "  Output: " << output << "\n" << std::endl;
+    }
+
     return timings;
 }
 
@@ -53,6 +58,14 @@ BENCH_FUNCTION_2(parallel_allreduce_mpi)
     if (ctx.mpi_id == MASTER)
     {
         TimerResult timings{"Array Reduction: Parallel/MPI"};
+
+        timings.show();
+
+        if (ctx.print_output)
+        {
+            std::cout << "  Output: " << output << "\n" << std::endl;
+        }
+
         return timings;
     }
     else
@@ -73,6 +86,14 @@ BENCH_FUNCTION_2(parallel_allreduce_ring)
     if (ctx.mpi_id == MASTER)
     {
         TimerResult timings{"Array Reduction: Parallel/Ring"};
+
+        timings.show();
+
+        if (ctx.print_output)
+        {
+            std::cout << "  Output: " << output << "\n" << std::endl;
+        }
+        
         return timings;
     }
     else
