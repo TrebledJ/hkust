@@ -13,7 +13,7 @@ Configure the program by specifying the following compilation flags:
 * `-D RANDOM_LO=1.0`. Specify the lower bound of numbers to be generated. By default, this is 1.0.
 * `-D RANDOM_HI=10.0`. Specify the upper bound of numbers to be generated. By default, this is 10.0.
 
-## Running
+<!-- ## Running -->
 
 <!-- TODO -->
 
