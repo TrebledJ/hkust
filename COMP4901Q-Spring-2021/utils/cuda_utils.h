@@ -69,22 +69,22 @@ namespace Utils
         class DeviceArray
         {
             DevicePointer<T> ptr;
-            size_t size;
+            size_t m_size;
 
         public:
-            DeviceArray(uint32_t len, T init = T{}) : ptr{nullptr, cudaFree}, size{len}
+            DeviceArray(uint32_t len, T init = T{}) : ptr{nullptr, cudaFree}, m_size{len}
             {
                 T* p;
-                CHECK(cudaMalloc((void**)&p, len * sizeof(T)));
-                CHECK(cudaMemset(p, init, len * sizeof(T)));
+                CUDA_CHECK(cudaMalloc((void**)&p, len * sizeof(T)));
+                CUDA_CHECK(cudaMemset(p, init, len * sizeof(T)));
                 ptr = DevicePointer<T>(p, cudaFree);
             }
 
-            DeviceArray(const T* copyfrom, uint32_t len) : ptr{nullptr, cudaFree}, size{len}
+            DeviceArray(const T* copyfrom, uint32_t len) : ptr{nullptr, cudaFree}, m_size{len}
             {
                 T* p;
-                CHECK(cudaMalloc((void**)&p, len * sizeof(T)));
-                CHECK(cudaMemcpy(p, copyfrom, len * sizeof(T), cudaMemcpyHostToDevice));
+                CUDA_CHECK(cudaMalloc((void**)&p, len * sizeof(T)));
+                CUDA_CHECK(cudaMemcpy(p, copyfrom, len * sizeof(T), cudaMemcpyHostToDevice));
                 ptr = DevicePointer<T>(p, cudaFree);
             }
 
@@ -96,8 +96,12 @@ namespace Utils
 
             void copy_to(T* dest, cudaMemcpyKind kind = cudaMemcpyDeviceToHost)
             {
-                CHECK(cudaMemcpy(dest, ptr.get(), size * sizeof(T), kind));
+                CUDA_CHECK(cudaMemcpy(dest, ptr.get(), m_size * sizeof(T), kind));
             }
+
+            T* get() { return ptr.get(); }
+            const T* get() const { return ptr.get(); }
+            size_t size() const { return m_size; }
 
             operator T*() const { return ptr.get(); }
         };
