@@ -43,7 +43,7 @@ void parallel_matmul_impl(const ContextP1& ctx, Matrix& output)
 
     // Scatter row chunks of A.
     MPI_CHECK(MPI_Scatter(ctx.matrix_A.data(), local_A.size(), MPI_FLOAT, local_A.data(), local_A.size(), MPI_FLOAT, 0,
-                      MPI_COMM_WORLD));
+                          MPI_COMM_WORLD));
 
     // Broadcast B.
     MPI_CHECK(MPI_Bcast(
@@ -54,8 +54,8 @@ void parallel_matmul_impl(const ContextP1& ctx, Matrix& output)
     const Matrix local_output = local_A * ctx.matrix_B;
 
     // Aggregate the local results back into the output matrix.
-    MPI_CHECK(MPI_Gather(local_output.data(), local_output.size(), MPI_FLOAT, output.data(), local_output.size(), MPI_FLOAT,
-                     0, MPI_COMM_WORLD));
+    MPI_CHECK(MPI_Gather(local_output.data(), local_output.size(), MPI_FLOAT, output.data(), local_output.size(),
+                         MPI_FLOAT, 0, MPI_COMM_WORLD));
 }
 #endif
 

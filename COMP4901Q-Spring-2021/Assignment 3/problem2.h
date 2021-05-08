@@ -79,8 +79,8 @@ float parallel_allreduce_mpi_impl(const ContextP2& ctx)
     Vector local_arr{ctx.n / ctx.num_procs};
 
     // Distribute the array.
-    MPI_CHECK(MPI_Scatter(ctx.array.data(), local_arr.size(), MPI_FLOAT, local_arr.data(), local_arr.size(), MPI_FLOAT, 0,
-                      MPI_COMM_WORLD));
+    MPI_CHECK(MPI_Scatter(ctx.array.data(), local_arr.size(), MPI_FLOAT, local_arr.data(), local_arr.size(), MPI_FLOAT,
+                          0, MPI_COMM_WORLD));
 
     // Do the thing!
     float local_res;
@@ -219,7 +219,8 @@ int RING_Allreduce(const T* sendbuf, T* recvbuf, int count, MPI_Datatype datatyp
         if (!no_send)
             MPI_CHECK(MPI_Isend(&recvbuf[idx], 1, datatype, dest_id, 0, comm, &send_req));
         if (!no_recv)
-            MPI_CHECK(MPI_Irecv(&recvbuf[prev], 1, datatype, src_id, 0, comm, &recv_req)); // Receive directly into buffer.
+            MPI_CHECK(
+                MPI_Irecv(&recvbuf[prev], 1, datatype, src_id, 0, comm, &recv_req)); // Receive directly into buffer.
 
         if (!no_send)
             MPI_CHECK(MPI_Wait(&send_req, &status));
