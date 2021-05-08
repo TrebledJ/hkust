@@ -20,8 +20,8 @@
 #define RUN_PROBLEM_2
 #endif
 
-#define OUTPUT_ROW_LIMIT 50
-#define OUTPUT_COL_LIMIT 20
+#define MATRIX_OUTPUT_LIMIT 10 // If a matrix's row/col exceeds this, matrix output (in Problem 1) won't be printed.
+#define VECTOR_OUTPUT_LIMIT 15 // If a vector's size exceeds this, vector output (in Problem 2) won't be printed.
 
 #ifndef RANDOM_LO
 #define RANDOM_LO 1.0

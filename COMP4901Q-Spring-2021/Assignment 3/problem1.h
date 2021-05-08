@@ -32,6 +32,7 @@ BENCH_FUNCTION_1(serial_matmul)
 }
 
 
+#if ENABLE_MPI
 void parallel_matmul_impl(const ContextP1& ctx, Matrix& output)
 {
     // Note: The internal container of matrix `A` won't be used for slave processes. Only the .row and .col members.
@@ -56,6 +57,7 @@ void parallel_matmul_impl(const ContextP1& ctx, Matrix& output)
     CHECK(MPI_Gather(local_output.data(), local_output.size(), MPI_FLOAT, output.data(), local_output.size(), MPI_FLOAT,
                      0, MPI_COMM_WORLD));
 }
+#endif
 
 
 BENCH_FUNCTION_1(parallel_matmul)
@@ -69,12 +71,6 @@ BENCH_FUNCTION_1(parallel_matmul)
     {
         // Time measurements will be done from the root process.
         TimerResult timings{"Matrix-Matrix Multiplication: Parallel/MPI"};
-
-        // Broadcast matrix dimensions.
-        // TODO: broadcast from caller in problems.h
-        CHECK(MPI_Bcast((void*)&ctx.m, 1, MPI_UINT32_T, 0, MPI_COMM_WORLD));
-        CHECK(MPI_Bcast((void*)&ctx.k, 1, MPI_UINT32_T, 0, MPI_COMM_WORLD));
-        CHECK(MPI_Bcast((void*)&ctx.n, 1, MPI_UINT32_T, 0, MPI_COMM_WORLD));
 
         // Initialise output matrix size.
         output.resize(ctx.m, ctx.n);
@@ -98,21 +94,10 @@ BENCH_FUNCTION_1(parallel_matmul)
     }
     else
     {
-        uint32_t m, k, n;
-
-        // Receive matrix dimensions.
-        CHECK(MPI_Bcast(&m, 1, MPI_UINT32_T, 0, MPI_COMM_WORLD));
-        CHECK(MPI_Bcast(&k, 1, MPI_UINT32_T, 0, MPI_COMM_WORLD));
-        CHECK(MPI_Bcast(&n, 1, MPI_UINT32_T, 0, MPI_COMM_WORLD));
-
-        ContextP1 derived_ctx = ctx;
-        derived_ctx.m = m;                 // Internal container of `A` won't be used, so just directly set the row/col.
-        derived_ctx.matrix_B.resize(k, n); // Resize `B` to prepare receiving data from broadcast.
-
         for (int i = 0; i < ctx.num_runs; i++)
         {
             CHECK(MPI_Barrier(MPI_COMM_WORLD));
-            parallel_matmul_impl(derived_ctx, output);
+            parallel_matmul_impl(ctx, output);
         }
     }
 #endif
