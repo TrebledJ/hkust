@@ -3,7 +3,7 @@
 This is the basic command to compile and run the program. Ensure that the hosts in the hostfile are known hosts.
 
 ```
-nvcc -I . -I ../utils -I /usr/local/software/openmpi/include/ -L /usr/local/software/openmpi/lib/ -l mpi -std=c++11 -Wno-deprecated-gpu-targets -O2 main.cu -D PRINT_OUTPUT
+nvcc -I . -I utils -I ../utils -I /usr/local/software/openmpi/include/ -L /usr/local/software/openmpi/lib/ -l mpi -std=c++11 -Wno-deprecated-gpu-targets -O2 main.cu -D PRINT_OUTPUT
 mpiexec --hostfile hostfile -n 2 -x "LD_LIBRARY_PATH=/usr/local/software/openmpi/lib:$LD_LIBRARY_PATH"
 ```
 
