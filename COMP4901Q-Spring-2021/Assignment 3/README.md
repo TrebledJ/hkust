@@ -3,7 +3,7 @@
 This is the basic command to compile and run the program. Ensure that the hosts in the hostfile are known hosts.
 
 ```
-$ mpic++ -std=c++11 main.cpp -D PRINT_OUTPUT && mpiexec --hostfile hostfile -n 8 ./a.out
+$ mpic++ -I. -I../utils -std=c++11 main.cpp -D PRINT_OUTPUT && mpiexec --hostfile hostfile -n 8 ./a.out
 ```
 
 Configure the program by specifying the following compilation flags:

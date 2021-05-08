@@ -254,39 +254,42 @@ namespace Utils
 
     namespace IO
     {
-        bool bad_read(const std::string& reason = "")
+        namespace detail
         {
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            if (reason.empty())
-                std::cout << "Input rejected.\n" << std::endl;
-            else
-                std::cout << "Input rejected: " << reason << ".\n" << std::endl;
-            return true;
-        }
-
-        template <typename T>
-        bool read(T& t)
-        {
-            if (!(std::cin >> t))
+            bool bad_read(const std::string& reason = "")
             {
-                bad_read("parse failed");
-                return false;
+                std::cin.clear();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                if (reason.empty())
+                    std::cout << "Input rejected.\n" << std::endl;
+                else
+                    std::cout << "Input rejected: " << reason << ".\n" << std::endl;
+                return true;
             }
-            return true;
-        }
 
-        template <typename T>
-        bool input_impl(T& x)
-        {
-            return read(x);
-        }
+            template <typename T>
+            bool read(T& t)
+            {
+                if (!(std::cin >> t))
+                {
+                    bad_read("parse failed");
+                    return false;
+                }
+                return true;
+            }
 
-        template <typename T, typename... Ts>
-        bool input_impl(T& x, Ts&... xs)
-        {
-            return read(x) && input_impl(xs...);
-        }
+            template <typename T>
+            bool input_impl(T& x)
+            {
+                return read(x);
+            }
+
+            template <typename T, typename... Ts>
+            bool input_impl(T& x, Ts&... xs)
+            {
+                return read(x) && input_impl(xs...);
+            }
+        } // namespace detail
 
         template <typename... Ts>
         void input(std::string prompt, Ts&... xs)
@@ -294,7 +297,7 @@ namespace Utils
             do
             {
                 std::cout << prompt;
-            } while (!input_impl(xs...));
+            } while (!detail::input_impl(xs...));
         }
 
         /**
@@ -302,16 +305,16 @@ namespace Utils
          *          bool(string&, const Ts&...), where Ts... are the types of the input arguments.
          */
         template <typename Func, typename... Ts>
-        void input(std::string prompt, Func validator, Ts&... xs)
+        void inputv(std::string prompt, Func validator, Ts&... xs)
         {
             std::string reason;
             do
             {
                 std::cout << prompt;
-            } while (!input_impl(xs...) || (!validator(reason, xs...) && bad_read(reason)));
+            } while (!detail::input_impl(xs...) || (!validator(reason, xs...) && detail::bad_read(reason)));
         }
 
-// Helper macros for writing validators.
+// Helper macros for writing input validators.
 #define validator(...) [&](std::string & reason, __VA_ARGS__)
 #define require(condition, reason_) \
     do                              \
@@ -322,6 +325,20 @@ namespace Utils
             return false;           \
         }                           \
     } while (0)
+
+#define positive                                    \
+    validator(int64_t n)                            \
+    {                                               \
+        require(n > 0, "input should be positive"); \
+        return true;                                \
+    }
+
+#define non_negative                                     \
+    validator(int64_t n)                                 \
+    {                                                    \
+        require(n >= 0, "input should be non-negative"); \
+        return true;                                     \
+    }
 
     } // namespace IO
 } // namespace Utils

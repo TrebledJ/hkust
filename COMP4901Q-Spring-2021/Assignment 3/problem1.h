@@ -42,11 +42,11 @@ void parallel_matmul_impl(const ContextP1& ctx, Matrix& output)
     Matrix local_A{ctx.m / ctx.num_procs, ctx.k};
 
     // Scatter row chunks of A.
-    CHECK(MPI_Scatter(ctx.matrix_A.data(), local_A.size(), MPI_FLOAT, local_A.data(), local_A.size(), MPI_FLOAT, 0,
+    MPI_CHECK(MPI_Scatter(ctx.matrix_A.data(), local_A.size(), MPI_FLOAT, local_A.data(), local_A.size(), MPI_FLOAT, 0,
                       MPI_COMM_WORLD));
 
     // Broadcast B.
-    CHECK(MPI_Bcast(
+    MPI_CHECK(MPI_Bcast(
         (void*)(ctx.matrix_B.data()), // Reinterpret-cast B. Technically it's still const since we're not modifying it.
         ctx.matrix_B.size(), MPI_FLOAT, 0, MPI_COMM_WORLD));
 
@@ -54,7 +54,7 @@ void parallel_matmul_impl(const ContextP1& ctx, Matrix& output)
     const Matrix local_output = local_A * ctx.matrix_B;
 
     // Aggregate the local results back into the output matrix.
-    CHECK(MPI_Gather(local_output.data(), local_output.size(), MPI_FLOAT, output.data(), local_output.size(), MPI_FLOAT,
+    MPI_CHECK(MPI_Gather(local_output.data(), local_output.size(), MPI_FLOAT, output.data(), local_output.size(), MPI_FLOAT,
                      0, MPI_COMM_WORLD));
 }
 #endif
@@ -77,7 +77,7 @@ BENCH_FUNCTION_1(parallel_matmul)
 
         for (int i = 0; i < ctx.num_runs; i++)
         {
-            CHECK(MPI_Barrier(MPI_COMM_WORLD)); // Enter and synchronise between loops, for more precise timing.
+            MPI_CHECK(MPI_Barrier(MPI_COMM_WORLD)); // Enter and synchronise between loops, for more precise timing.
 
             MPITimer timer{&timings};
             parallel_matmul_impl(ctx, output);
@@ -96,7 +96,7 @@ BENCH_FUNCTION_1(parallel_matmul)
     {
         for (int i = 0; i < ctx.num_runs; i++)
         {
-            CHECK(MPI_Barrier(MPI_COMM_WORLD));
+            MPI_CHECK(MPI_Barrier(MPI_COMM_WORLD));
             parallel_matmul_impl(ctx, output);
         }
     }

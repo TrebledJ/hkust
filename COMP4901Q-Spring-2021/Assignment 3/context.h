@@ -60,7 +60,7 @@ struct ContextP1 : Context
                   << "\n"
                   << std::endl;
 
-        input(
+        inputv(
             "(<m> <k> <n>) >>> ",
             validator(int32_t m, int32_t k, int32_t n)
             {
@@ -110,7 +110,7 @@ struct ContextP2 : Context
                   << ".\n"
                   << std::endl;
         int32_t n, op;
-        input(
+        inputv(
             "(<n>) >>> ",
             validator(int32_t n)
             {
@@ -126,7 +126,7 @@ struct ContextP2 : Context
         std::cout << "Please select the operation to perform.\n";
         std::cout << "  0: sum\n";
         std::cout << "  1: max\n" << std::endl;
-        input(
+        inputv(
             "(<op>) >>> ",
             validator(int op)
             {

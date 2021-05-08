@@ -10,7 +10,7 @@
 
 
 // Macro to check for errors on MPI API.
-#define CHECK(call)                                                          \
+#define MPI_CHECK(call)                                                      \
     {                                                                        \
         const int error = call;                                              \
         if (error != MPI_SUCCESS)                                            \
