@@ -29,11 +29,12 @@ struct Data
 
     friend bool operator==(const Data& lhs, const Data& rhs)
     {
-        if (lhs.numbers.size() != rhs.numbers.size())
+        if (lhs.size() != rhs.size())
             return false;
 
-        for (int i = 0; i < lhs.numbers.size(); i++)
-            if (fabs(lhs.numbers[i] - rhs.numbers[i]) > 1)
+        const float thresh = lhs.size() * rhs.size() * 1e-3;
+        for (int i = 0; i < lhs.size(); i++)
+            if (fabs(lhs.numbers[i] - rhs.numbers[i]) > thresh)
                 return false;
         return true;
     }
