@@ -79,8 +79,8 @@ float parallel_allreduce_mpi_impl(const ContextP2& ctx)
     Vector local_arr{ctx.n / ctx.num_procs};
 
     // Distribute the array.
-    CHECK(MPI_Scatter(ctx.array.data(), local_arr.size(), MPI_FLOAT, local_arr.data(), local_arr.size(), MPI_FLOAT, 0,
-                      MPI_COMM_WORLD));
+    MPI_CHECK(MPI_Scatter(ctx.array.data(), local_arr.size(), MPI_FLOAT, local_arr.data(), local_arr.size(), MPI_FLOAT,
+                          0, MPI_COMM_WORLD));
 
     // Do the thing!
     float local_res;
@@ -102,7 +102,7 @@ float parallel_allreduce_mpi_impl(const ContextP2& ctx)
     const MPI_Op op = (ctx.op == ContextP2::SUM ? MPI_SUM : ctx.op == ContextP2::MAX ? MPI_MAX : MPI_OP_NULL);
 
     float res = 0.0;
-    CHECK(MPI_Allreduce(&local_res, &res, 1, MPI_FLOAT, op, MPI_COMM_WORLD));
+    MPI_CHECK(MPI_Allreduce(&local_res, &res, 1, MPI_FLOAT, op, MPI_COMM_WORLD));
 
     return res;
 }
@@ -122,7 +122,7 @@ BENCH_FUNCTION_2(parallel_allreduce_mpi)
 
         for (int i = 0; i < ctx.num_runs; i++)
         {
-            CHECK(MPI_Barrier(MPI_COMM_WORLD)); // Sync processes.
+            MPI_CHECK(MPI_Barrier(MPI_COMM_WORLD)); // Sync processes.
 
             MPITimer timer{&timings};
             output = parallel_allreduce_mpi_impl(ctx);
@@ -141,7 +141,7 @@ BENCH_FUNCTION_2(parallel_allreduce_mpi)
     {
         for (int i = 0; i < ctx.num_runs; i++)
         {
-            CHECK(MPI_Barrier(MPI_COMM_WORLD));
+            MPI_CHECK(MPI_Barrier(MPI_COMM_WORLD));
             parallel_allreduce_mpi_impl(ctx);
         }
     }
@@ -161,8 +161,8 @@ int RING_Allreduce(const T* sendbuf, T* recvbuf, int count, MPI_Datatype datatyp
     assert(recvbuf && "recvbuf cannot be null");
 
     int id, num_procs;
-    CHECK(MPI_Comm_rank(comm, &id));
-    CHECK(MPI_Comm_size(comm, &num_procs));
+    MPI_CHECK(MPI_Comm_rank(comm, &id));
+    MPI_CHECK(MPI_Comm_size(comm, &num_procs));
     assert(count <= num_procs); // TODO: Assume for now that count == num_procs.
 
     const int dest_id = (id + 1 == num_procs ? 0 : id + 1);
@@ -188,16 +188,16 @@ int RING_Allreduce(const T* sendbuf, T* recvbuf, int count, MPI_Datatype datatyp
         // Cycle messages.
         T buf;
         if (!no_send)
-            CHECK(MPI_Isend(&recvbuf[idx], 1, datatype, dest_id, 0, comm, &send_req));
+            MPI_CHECK(MPI_Isend(&recvbuf[idx], 1, datatype, dest_id, 0, comm, &send_req));
         if (!no_recv)
-            CHECK(
+            MPI_CHECK(
                 MPI_Irecv(&buf, 1, datatype, src_id, 0, comm,
                           &recv_req)); // Receive data from the (id-1)th process, to be updated with the (i-1)th value.
 
         if (!no_send)
-            CHECK(MPI_Wait(&send_req, &status));
+            MPI_CHECK(MPI_Wait(&send_req, &status));
         if (!no_recv)
-            CHECK(MPI_Wait(&recv_req, &status));
+            MPI_CHECK(MPI_Wait(&recv_req, &status));
 
         if (!no_recv)
             recvbuf[prev] = operate(op, recvbuf[prev], buf);
@@ -217,14 +217,15 @@ int RING_Allreduce(const T* sendbuf, T* recvbuf, int count, MPI_Datatype datatyp
 
         // Cycle messages.
         if (!no_send)
-            CHECK(MPI_Isend(&recvbuf[idx], 1, datatype, dest_id, 0, comm, &send_req));
+            MPI_CHECK(MPI_Isend(&recvbuf[idx], 1, datatype, dest_id, 0, comm, &send_req));
         if (!no_recv)
-            CHECK(MPI_Irecv(&recvbuf[prev], 1, datatype, src_id, 0, comm, &recv_req)); // Receive directly into buffer.
+            MPI_CHECK(
+                MPI_Irecv(&recvbuf[prev], 1, datatype, src_id, 0, comm, &recv_req)); // Receive directly into buffer.
 
         if (!no_send)
-            CHECK(MPI_Wait(&send_req, &status));
+            MPI_CHECK(MPI_Wait(&send_req, &status));
         if (!no_recv)
-            CHECK(MPI_Wait(&recv_req, &status));
+            MPI_CHECK(MPI_Wait(&recv_req, &status));
     }
 
     return MPI_SUCCESS;
@@ -237,7 +238,7 @@ float parallel_allreduce_ring_impl(const ContextP2& ctx)
     Vector local_array{count};
     Vector crossthread_result{count};
 
-    CHECK(MPI_Scatter(ctx.array.data(), count, MPI_FLOAT, local_array.data(), count, MPI_FLOAT, 0, MPI_COMM_WORLD));
+    MPI_CHECK(MPI_Scatter(ctx.array.data(), count, MPI_FLOAT, local_array.data(), count, MPI_FLOAT, 0, MPI_COMM_WORLD));
 
     if (count > ctx.num_procs)
     {
@@ -279,7 +280,7 @@ BENCH_FUNCTION_2(parallel_allreduce_ring)
 
         for (int i = 0; i < ctx.num_runs; i++)
         {
-            CHECK(MPI_Barrier(MPI_COMM_WORLD)); // Sync processes.
+            MPI_CHECK(MPI_Barrier(MPI_COMM_WORLD)); // Sync processes.
 
             MPITimer timer{&timings};
             output = parallel_allreduce_ring_impl(ctx);
@@ -298,7 +299,7 @@ BENCH_FUNCTION_2(parallel_allreduce_ring)
     {
         for (int i = 0; i < ctx.num_runs; i++)
         {
-            CHECK(MPI_Barrier(MPI_COMM_WORLD));
+            MPI_CHECK(MPI_Barrier(MPI_COMM_WORLD));
             parallel_allreduce_ring_impl(ctx);
         }
     }

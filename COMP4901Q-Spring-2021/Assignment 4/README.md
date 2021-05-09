@@ -1,9 +1,10 @@
-# COMP4901Q: Assignment 3
+# COMP4901Q: Assignment 4
 ## Compiling
 This is the basic command to compile and run the program. Ensure that the hosts in the hostfile are known hosts.
 
 ```
-$ mpic++ -I. -I../utils -std=c++11 main.cpp -D PRINT_OUTPUT && mpiexec --hostfile hostfile -n 8 ./a.out
+nvcc -I . -I utils -I ../utils -I /usr/local/software/openmpi/include/ -L /usr/local/software/openmpi/lib/ -l mpi -std=c++11 -Wno-deprecated-gpu-targets -O2 main.cu -D PRINT_OUTPUT
+mpiexec --hostfile hostfile -x "LD_LIBRARY_PATH=/usr/local/software/openmpi/lib:$LD_LIBRARY_PATH" -n 4 ./a.out
 ```
 
 Configure the program by specifying the following compilation flags:

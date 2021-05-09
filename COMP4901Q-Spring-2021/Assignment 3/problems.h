@@ -36,9 +36,9 @@ void problem1(const Context& ctx)
         std::cout << std::endl;
 
 #if ENABLE_MPI
-        CHECK(MPI_Bcast(&ctxp1.m, 1, MPI_UINT32_T, 0, MPI_COMM_WORLD));
-        CHECK(MPI_Bcast(&ctxp1.k, 1, MPI_UINT32_T, 0, MPI_COMM_WORLD));
-        CHECK(MPI_Bcast(&ctxp1.n, 1, MPI_UINT32_T, 0, MPI_COMM_WORLD));
+        MPI_CHECK(MPI_Bcast(&ctxp1.m, 1, MPI_UINT32_T, 0, MPI_COMM_WORLD));
+        MPI_CHECK(MPI_Bcast(&ctxp1.k, 1, MPI_UINT32_T, 0, MPI_COMM_WORLD));
+        MPI_CHECK(MPI_Bcast(&ctxp1.n, 1, MPI_UINT32_T, 0, MPI_COMM_WORLD));
 #endif
 
         // All the actual timing is here!
@@ -55,9 +55,9 @@ void problem1(const Context& ctx)
     {
 #if ENABLE_MPI
         uint32_t m, k, n;
-        CHECK(MPI_Bcast(&m, 1, MPI_UINT32_T, 0, MPI_COMM_WORLD));
-        CHECK(MPI_Bcast(&k, 1, MPI_UINT32_T, 0, MPI_COMM_WORLD));
-        CHECK(MPI_Bcast(&n, 1, MPI_UINT32_T, 0, MPI_COMM_WORLD));
+        MPI_CHECK(MPI_Bcast(&m, 1, MPI_UINT32_T, 0, MPI_COMM_WORLD));
+        MPI_CHECK(MPI_Bcast(&k, 1, MPI_UINT32_T, 0, MPI_COMM_WORLD));
+        MPI_CHECK(MPI_Bcast(&n, 1, MPI_UINT32_T, 0, MPI_COMM_WORLD));
 
         ContextP1 ctxp1;
         ctxp1.m = m, ctxp1.k = k;    // Internal container of `A` won't be used, so just directly set the row/col.
@@ -90,8 +90,8 @@ void problem2(const Context& ctx)
 
 #if ENABLE_MPI
         uint32_t op = ctxp2.op;
-        CHECK(MPI_Bcast(&ctxp2.n, 1, MPI_UINT32_T, 0, MPI_COMM_WORLD));
-        CHECK(MPI_Bcast(&op, 1, MPI_UINT32_T, 0, MPI_COMM_WORLD));
+        MPI_CHECK(MPI_Bcast(&ctxp2.n, 1, MPI_UINT32_T, 0, MPI_COMM_WORLD));
+        MPI_CHECK(MPI_Bcast(&op, 1, MPI_UINT32_T, 0, MPI_COMM_WORLD));
 #endif
 
         float output_s, output_mpi, output_ring;
@@ -112,8 +112,8 @@ void problem2(const Context& ctx)
     {
 #if ENABLE_MPI
         uint32_t n, op;
-        CHECK(MPI_Bcast(&n, 1, MPI_UINT32_T, 0, MPI_COMM_WORLD));
-        CHECK(MPI_Bcast(&op, 1, MPI_UINT32_T, 0, MPI_COMM_WORLD));
+        MPI_CHECK(MPI_Bcast(&n, 1, MPI_UINT32_T, 0, MPI_COMM_WORLD));
+        MPI_CHECK(MPI_Bcast(&op, 1, MPI_UINT32_T, 0, MPI_COMM_WORLD));
 
         ContextP2 ctxp2{n, op};
         float output; // Unused.

@@ -9,7 +9,6 @@
 #include <iostream>
 #include <vector>
 
-
 struct Data
 {
     std::vector<float> numbers;
@@ -30,11 +29,12 @@ struct Data
 
     friend bool operator==(const Data& lhs, const Data& rhs)
     {
-        if (lhs.numbers.size() != rhs.numbers.size())
+        if (lhs.size() != rhs.size())
             return false;
 
-        for (int i = 0; i < lhs.numbers.size(); i++)
-            if (fabs(lhs.numbers[i] - rhs.numbers[i]) > 1e-3)
+        const float thresh = lhs.size() * rhs.size() * 1e-3;
+        for (int i = 0; i < lhs.size(); i++)
+            if (fabs(lhs.numbers[i] - rhs.numbers[i]) > thresh)
                 return false;
         return true;
     }
@@ -47,7 +47,6 @@ struct Data
         return os;
     }
 };
-
 
 /**
  * @brief   A vector specifially designed for this assignment.
@@ -70,13 +69,12 @@ struct Vector : Data
         std::cout << std::setprecision(3) << std::fixed;
         std::cout << "[";
         if (numbers.empty())
-            std::cout << "(empty)\n";
+            std::cout << " (empty)";
         for (int i = 0; i < numbers.size(); i++)
             std::cout << " " << numbers[i];
         std::cout << " ]";
     }
 };
-
 
 /**
  * @brief   A matrix specifially designed for this assignment.
@@ -104,19 +102,6 @@ struct Matrix : Data
         this->row = row;
         this->col = col;
         numbers.resize(row * col);
-    }
-
-    Vector apply(const Vector& v) const
-    {
-        if (v.size() != col)
-            throw std::runtime_error("Matrix::apply: vector size does not equal matrix col");
-
-        Vector out(row);
-        for (int i = 0; i < row; i++)
-            for (int j = 0; j < col; j++)
-                out[i] += numbers[i * col + j] * v[j];
-
-        return out;
     }
 
     Matrix transposed() const
@@ -166,7 +151,19 @@ struct Matrix : Data
         }
         return result;
     }
-};
 
+    friend Vector operator*(const Matrix& lhs, const Vector& rhs)
+    {
+        if (rhs.size() != lhs.col)
+            throw std::runtime_error("Matrix::apply: vector size does not equal matrix col");
+
+        Vector result{lhs.row};
+        for (int r = 0; r < lhs.row; r++)
+            for (int c = 0; c < lhs.col; c++)
+                result[r] += lhs.at(r, c) * rhs[c];
+
+        return result;
+    }
+};
 
 #endif
