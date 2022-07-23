@@ -1,0 +1,104 @@
+# Batch format:
+#  - Open the terminal at the project directory.
+#  - Run:
+#       dir=.
+#       subdir=(src)
+#       clang-format -i -style=file $(find "${subdir[@]/#/$dir/}" -type f -name "*.h" -o -name "*.hpp" -o -name "*.cpp")
+#
+# You may refer to the style options from the official site:
+# https://clang.llvm.org/docs/ClangFormatStyleOptions.html
+---
+# The important stuff:
+BasedOnStyle: Google
+UseTab: Never
+IndentWidth: 4
+TabWidth: 4
+ColumnLimit: 120
+
+# The not-so-important stuff:
+AlignAfterOpenBracket: Align
+AlignConsecutiveMacros: true
+AlignEscapedNewlines: Left
+AlignOperands: true
+AlignTrailingComments: true
+BreakBeforeBinaryOperators: NonAssignment
+
+AllowAllArgumentsOnNextLine: true
+AllowAllConstructorInitializersOnNextLine: true
+AllowAllParametersOfDeclarationOnNextLine: true
+AllowShortBlocksOnASingleLine: Empty
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortFunctionsOnASingleLine: InlineOnly
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+
+DerivePointerAlignment: false
+PointerAlignment: Left
+
+KeepEmptyLinesAtTheStartOfBlocks: true  # For namespaces.
+
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterCaseLabel: true
+  AfterClass: true
+  AfterControlStatement: Always
+  AfterEnum: true
+  AfterFunction: true
+  AfterNamespace: true
+  AfterStruct: true
+  AfterUnion: true
+  AfterExternBlock: true
+  BeforeCatch: true
+  BeforeElse: true
+  BeforeWhile: false
+  BeforeLambdaBody: true
+  SplitEmptyFunction: true
+  SplitEmptyRecord: true
+  SplitEmptyNamespace: true
+
+IndentCaseLabels: false
+IndentPPDirectives: None
+MaxEmptyLinesToKeep: 2
+ReflowComments: true
+SpacesBeforeTrailingComments: 1
+# SpacesInLineCommentPrefix:
+#   Minimum: 1
+#   Maximum: -1
+
+IncludeCategories:
+  # Qt headers.
+  - Regex:          '^("|<)Q.*'
+    Priority:       10
+
+  # Standard headers.
+  - Regex:          '<.+>'
+    Priority:       20
+
+  # Helper headers.
+  - Regex:          '^"helper.*'
+    Priority:       2
+    SortPriority:   2
+
+  # Box2D headers.
+  - Regex:          '^("|<)(b2|box2d)'
+    Priority:       5
+
+  # Other headers.
+  - Regex:          '.*'
+    Priority:       1
+    SortPriority:   1
+
+# C++ Specifics:
+Standard: c++20
+
+AccessModifierOffset: -4
+AllowAllConstructorInitializersOnNextLine: false
+AllowShortLambdasOnASingleLine: All
+BreakConstructorInitializers: BeforeComma
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+# EmptyLineBeforeAccessModifier: LogicalBlock
+FixNamespaceComments: true
+# BreakBeforeConceptDeclarations: true
+# IndentRequires: true
+NamespaceIndentation: All
+...

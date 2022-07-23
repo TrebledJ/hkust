@@ -1,0 +1,30 @@
+
+=== Test case 14 ===
+
+true
+		(z)
+				(y)
+(w)
+						(g)
+				(e)
+						(d)
+		(c)
+				(b)
+
+true
+		(z)
+				(y)
+(w)
+				(e)
+						(d)
+		(c)
+				(b)
+
+true
+		(z)
+				(y)
+(w)
+				(d)
+		(c)
+				(b)
+

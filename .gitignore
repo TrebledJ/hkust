@@ -6,3 +6,5 @@
 *.exe
 *.out
 COMP4901Q-Spring-2021/Assignment 3/*.sh
+
+build/

@@ -1,0 +1,16 @@
+- Total 10 points for this assignment.
+- There are ten test cases in total. Incorrect output will be deducted 1 point for each.
+- Compile error on CS Lab 2 machines: 0 point.
+- Output contains blanks incorrectly will be deducted 1 point.
+
+
+FCBr(Cl)F
+CC(=O)OCCC(/C)=C\C[CH4](CC=C)CCC=C
+[He]C([H])([HH2])[CH4]|[H]
+NCCN(CC)C(CF=C)=CC(=CC=O)N(CCC)C=CC(=O)O|C
+MAX COc[H6]ccccC#N
+MIN CC(=O)OCCC(/C)=C\C[CH4](CC=C)CCC=C
+{MIN CC(=O)OCCC(/C)=C\C[CH4](CC=C)CCC=C}
+UNIQUE S[Al](F)(Cl)(Br)(I)CCC=O
+{NCCN(CC)C(CF=C)=CC(=CC=O)N(CCC)C=CC(=O)O|C}+{CCCCC/C(C)=C/C=C/C(C)=C/C=C/C(C)=C/C=C/C=C(C)/C=C/C=C(C)/C=C/C=C(C)/CCCC(C)C|C}
+{UNIQUE S[Al](F)(Cl)(Br)(I)CCC=O}+{UNIQUE FCBr(Cl)F}

@@ -1,6 +1,0 @@
-
-=== Test case 12 ===
-
-true
-true
-false

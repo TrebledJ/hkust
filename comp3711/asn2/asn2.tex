@@ -1,0 +1,233 @@
+\documentclass[12pt,a4paper]{article}
+\input{preamble.tex}
+
+\newcommand{\name}{\textit{redacted}}
+\newcommand{\sid}{\textit{redacted}}
+\newcommand{\thistitle}{COMP3711 Assignment 1}
+
+\begin{document}
+	\lhead{\name}
+	\chead{\thistitle}
+	\rhead{\sid}
+
+\section*{Problem 1}
+	\begin{enumerate}[label=(\alph*)]
+		\item 
+		\begin{enumerate}[label=(\roman*)]
+			\item 
+			Procedure for $\textproc{Heavy}(i, j)$\footnotemark:
+			\begin{algorithm}
+				\caption{Heavy, returns the set of heavy elements within a range $i$, $j$, inclusive.}
+				\label{heavy}
+				\begin{algorithmic}[1]
+					\Procedure{Heavy}{$i$, $j$}
+						\If{$i = j$}
+							\Return $\{A[i]\}$ \Comment{Base case of a single element, which is heavy on its own.}
+						\EndIf
+
+						\Statex
+						\State $m \gets \floor*{\frac{i + j}{2}}$
+						\Comment{Take the midpoint of $i$ and $j$.}
+
+						\State $L \gets \textproc{Heavy}(i, m)$
+						\Comment{Recurse on left half}
+						
+						\State $R \gets \textproc{Heavy}(m+1, j)$
+						\Comment{Recurse on right half}
+
+						\State Create Set $S$
+						\label{heavy:newset}
+						\Comment{Initialise an empty set, to be returned.}
+
+						\ForAll{$e \in L \cup R$}
+						\Comment{For each (distinct) element in the both $L$ and $R$}
+
+							\State $c \gets $ count of $e$ in $A[i \dots j]$
+							\label{heavy:count}
+							\Comment{$O(j - i + 1)$, linear w.r.t. size of $A[i\dots j]$}
+
+							\If{$c > \frac{3}{20} (j - i + 1)$}
+							\label{heavy:cond}
+								\State $S \gets S \cup \{e\}$ \label{heavy:add}
+								\Comment{$e$ is (still) heavy, $O(2|S|)$}
+							\EndIf
+						\EndFor
+						\Return $S$
+						\Comment{Return the heavy elements for $A[i \dots j]$}
+					\EndProcedure
+				\end{algorithmic}
+			\end{algorithm}
+
+			\footnotetext{Algorithm construction assisted by \textit{redacted}.}
+
+			\item
+			The algorithm \textproc{Heavy} first checks the base case, input where $i = j$. For any base case, the set of heavy items is a singleton of the element $A[i]$ itself (since $1 \ge 1 = \ceil*{\frac{3}{20}}$).
+
+			Next, we divide the problem into two subproblems $\textproc{Heavy}(i, m)$ and $\textproc{Heavy}(m+1, j)$, each of which return a set of heavy numbers from the respective subarrays $A[i \dots m]$ and $A[m+1 \dots j]$.
+
+			We take the union of these sets ($L \cup R$) to ensure no duplicated elements, then walk through the set. For each distinct element, we count the occurrences in $A[i \dots j]$ (\algref{heavy}{heavy:count}) and check if the count $c$ satisfies the heaviness condition (\algref{heavy}{heavy:cond}). Note that the counting needs to make one pass through the array and is hence $O(j - i + 1)$. If the condition is satisfied, the element is added (\algref{heavy}{heavy:add}) to a separate set (\algref{heavy}{heavy:newset}).
+		\end{enumerate}
+		
+		\item
+		Let's do some induction!
+
+		Let the inductive proposition be $I(n)$: for some $i,j$, such that $i < j$, $n = j - i + 1$, $\textproc{Heavy}(i, j)$ returns a set $S$ such that $e$ is heavy for all $e \in S$.
+
+		\textbf{Base case} ($n = 1$). By the proposition, for $I(1)$, we have $i = j$ and we correctly return the set of heavy elements, which is the singleton set $\{A[i]\}$.
+
+		\textbf{General case} ($n > 1$). Assume $I(k)$ is true for all $k < n$. Now we have $m = \floor*{\frac{i + j}{2}}$ and we split into subcases with sizes $m - i + 1 = \floor*{\frac{j - i}{2}} + 1$ and $j - (m + 1) + 1 = \ceil*{\frac{j - i}{2}}$.
+		
+		Since $\floor*{\frac{j - i}{2}} + 1 < n$ and $\ceil*{\frac{j - i}{2}} < n$, we know by assumption that $I$ is true and that $\textproc{Heavy}$ correctly returns the set of heavy elements of $A[i\dots m]$ and $A[m+1 \dots j]$ respectively.
+
+		We then check each element $e$ of the union of the subresults and ensure that the element is still heavy based on the condition that $e$ occurs at least 15\% of the time.
+
+		Note that non-heavy elements are correctly discarded. If some array element $e$ isn't heavy (occurs less than 15\%) on the left and isn't heavy on the right, then $e$ isn't heavy on the combined array.
+
+		\item
+		\textbf{Base Case} ($n = 1$). $T(1) = 1$. This is the cost of constructing $\{A[i]\}$.
+
+		\textbf{General Case} ($n > 1$). $T(n) = T\parens*{\floor*{\frac{n-1}{2}} + 1} + T\parens*{\ceil*{\frac{n-1}{2}}} + c_1 n$. For the subcases, we are reusing the derivations $\floor*{\frac{n}{2}} + 1$ and $\ceil*{\frac{n}{2}}$ from part (b) by substituting $n - 1 = j - i$.
+
+		Note that $|L|$, $|R|$, and thus $|L \cup R|$ are bounded by a constant. The maximum amount of heavy numbers for any $\textproc{Heavy}(i, j)$ for some $n = j - i + 1$ is 6. Why? We prove by contradiction. Suppose the set returned contains 7 or more distinct heavy elements. Each element would have to appear more than 15\% of the set, accounting for 105\% (of $n$). This is a contradiction since the set should only contain up to 100\% of items. This result allows us simplify the complexity of lines 9 to 14 to $c_1 n$ where the $n$ comes from line 10 and the $c_1$ comes from summing the constant operations (set union $L \cup R$, $S \cup \{e\}$, etc.).
+		
+		We then have $T(n) \le T\parens*{\floor*{\frac{n}{2}}} + T\parens*{\ceil*{\frac{n}{2}}} + c_1n \le 2T \le 2T\parens*{\ceil*{\frac{n}{2}}} + c_1n$. By the master theorem for inequalities, we have $c = \log_2 2 = 1$ and thus $T(n) = O(n \log n)$.
+	\end{enumerate}
+	 
+\section*{Problem 2}
+	\begin{enumerate}[label=(\alph*)]
+		\item 
+		\begin{enumerate}[label=(\roman*)]
+			\item Let
+			$
+			X_i =
+			\begin{cases}
+				1 & \text{if $A[i]$ is a local minimum} \\
+				0 & \text{otherwise}
+			\end{cases}
+			$.
+			
+			For end cases, we have $P(X_1 = 1) = P(X_n = 1) = \frac{1}{2}$. (Why?\footnotemark[2])
+			For middle cases $X_i$, we consider $A[i-1]$, $A[i]$, $A[i+1]$. There are 3! permutations and exactly 2 of these permutations situate $A[i]$ as a local minimum. Thus we have $P(X_i = 1) = \frac{2}{3!} = \frac{1}{3}$.
+
+			There are 2 end cases and $n - 2$ middle cases. The expected number of local minima in $A$ is hence $E\parens*{\sum_{i=1}^n X_i} = 2 \times \frac{1}{2} + (n - 2) \times \frac{1}{3} = \frac{n + 1}{3}$. (Source.\footnotemark[3])
+
+			\footnotetext[2]{We can prove this by induction. Let $P_n$ denote the probability that the first element (left end) is a local minimum. Given an array $A$ with random permutation of $\angles{1, \dots, n}$ ($n \ge 2$), we have a base case of $P_2 = \frac{1}{2}$. Assume $P_{n-1} = \frac{1}{2}$. We formulate $P_n = \frac{1}{n} + \frac{n - 2}{n}P_{n-1}$, which by solving gives $\frac{1}{2}$.
+			
+			$P_n$ can be pictured as inserting a new larger element $n$ into the random permutation of $\angles{1, \dots, n-1}$. We retain the local minimum by inserting $n$ into the second index (corresponding to $\frac{1}{n}$) or inserting in the third index or beyond (corresponding to the recursive $\frac{n - 2}{n}P_{n-1}$).}
+
+			\footnotetext[3]{Solution inspired from: \url{https://math.stackexchange.com/q/680660/615376}}
+			\addtocounter{footnote}{2}
+
+			\item 
+			Generalising from the array end case and middle case, let $S$ be the data structure under inspection, $n$ be the number of nodes of $S$, $i$ be some index $1 \le i \le n$, and $m$ be the number of neighbours of $S[i]$ (the $i^{\text{th}}$ node of $S$). Let $X_i$ be the indicator random variable, indicating if $S[i]$ is a local minimum. Then $P(X_i = 1) = \frac{m!}{(m+1)!} = \frac{1}{m+1}$ (we fix the $i^\text{th}$ node and take the permutations of the $m$ neighbours).
+
+			The nodes and expected values are broken down as follows:
+			Firstly, the root. There is only one; with $P(X_1 = 1) = \frac{1}{3}$. Secondly, the leaves, each with one neighbour. There are $\frac{n + 1}{2}$. For $n \ge 2$, we have $P(X_i = 1) = \frac{1}{2}$, where $S[i]$ are leaves.
+			
+			This leaves\footnote{haha} the nodes in the middle levels, each of which have three neighbours. Theare are $n - 1 - \frac{n + 1}{2} = \frac{n - 3}{2}$. For $n \ge 3$, we have $P(X_i = 1) = \frac{1}{4}$, where $S(i)$ are middle nodes.
+
+			The total expected value of local minima in a tree is then
+			$$
+			E(\sum_{i=1}^n X_i) =
+			\begin{cases}
+				0 & \text{if $n = 0$} \\
+				\frac{1}{3} & \text{if $n = 1$} \\
+				\frac{1}{3} + \frac{n + 1}{2} \cdot \frac{1}{2}
+				+ \frac{n - 3}{2} \cdot \frac{1}{4} = \frac{9n + 5}{24} & \text{if $n \ge 3$}
+			\end{cases}
+			$$
+
+			(Note that the $n = 2$ case doesn't exist by assumption.)
+
+			\item
+			We treat $(i,j)$ elements as nodes and use similar methodologies. Let $n = m^2$ be the number of elements of the matrix.
+
+			For each node, if $M(i, j)$ has
+			\begin{itemize}
+				\item 2 neighbours (corners): $$
+				X_{(i, j)} =
+				\begin{cases}
+					0 & \text{if } m = 1 \\
+					4 & \text{if } m \ge 2
+				\end{cases}
+				$$
+
+				\item 3 neighbours (edges, non-corners): $$
+				X_{(i, j)} =
+				\begin{cases}
+					0 & \text{if } m = 1 \\
+					4m - 8 & \text{if } m \ge 2
+				\end{cases}
+				$$
+
+				\item 4 neighbours: $$
+				X_{(i, j)} =
+				\begin{cases}
+					0 & \text{if } m = 1 \\
+					(m - 2)^2 & \text{if } m \ge 2
+				\end{cases}
+				$$
+			\end{itemize}
+
+			The expected value of local minima is then
+			$$
+			\begin{cases}
+				0 & \text{if } m = 1 \\
+				4 \cdot \frac{1}{3} + (4m - 8) \cdot \frac{1}{4}
+				+ (m - 2)^2 \cdot \frac{1}{5} = m - \frac{2}{3} + \frac{1}{5}(m - 2)^2 & \text{if } m \ge 2
+			\end{cases}
+			$$
+
+
+		\end{enumerate}
+
+		\item
+		\begin{enumerate}[label=(\roman*)]
+			\item Similar to the array case, but without the end points. For each middle element, fix the middle element and permute the other two: two cases per $X_i$. Let $X_i$ be the indicator random variable indicating if $A[i]$ is a saddle point. $$E\parens*{\sum_{i=1}^n X_i} = \frac{n - 2}{3}.$$
+
+			\item We only consider the elements in the middle level. So $P(X_i) = 0$ for $i$ where $T[i]$ is a root or leaf.
+			
+			From a.ii, we know there are $\frac{n - 3}{2}$. Each of these nodes have 4 neighbours, strictly ordered. For some $T[i]$, we consider its parent, $T[i]$, and its two children. Fixing the parent and $T[i]$, we deduce that there are two permutations (with $T[i]$ as a saddle point) out of $4!$. Thus, $P(X_i = 1) = \frac{1}{12}$, and $E\parens*{\sum_{i=0}^n X_i} = \frac{n - 2}{12}$.
+			
+			\item We split this problem into multiple cases. For corners, there is 1 out of 3! permutations satisfying the constraint. For non-corner edges, 2 out of 4! permutations. For inner cells, 4 out of 5! permutations. The expected value is then
+			\begin{align*}
+				E\parens*{\sum_{i=0}^n} &=
+				\begin{cases}
+					0 & \text{if } m = 1 \\
+					4 \cdot \frac{1}{3!} + (4m - 8) \cdot \frac{2}{4!}
+					+ (m - 2)^2 \cdot \frac{4}{5!} & \text{if } m \ge 2
+				\end{cases} \\
+				&= 
+				\begin{cases}
+					0 & \text{if } m = 1 \\
+					\frac{2}{3} + \frac{m - 2}{3}
+					+ \frac{(m - 2)^2}{30} & \text{if } m \ge 2
+				\end{cases}
+			\end{align*}
+
+		\end{enumerate}
+	\end{enumerate}
+
+\section*{Problem 3}
+	\begin{enumerate}[label=(\alph*)]
+		\item 
+		\begin{enumerate}[label=(\roman*)]
+			\item 
+			There is at least one minimum, and it is not at infinity, since $x_i$ are defined to be real numbers. Thus, there exists $z_1$ such that $f(x)$ is monotonically decreasing.
+
+			\item 
+			
+		\end{enumerate}
+	\end{enumerate}
+
+\section*{Problem 4}
+	\begin{enumerate}[label=(\alph*)]
+		\item $T(n) = O(n^{5/2})$
+		\item $T(n) = O(n^{\log_2{9}})$ % c = log_2 9, f(n) = n^3 log_2 n
+		\item $T(n) = O(n^2 \log n)$ % c = 2, f(n) = n(n+1)/2
+		\item $T(n) = O(n^{\log_4{3}})$ % c = log_4 3, f(n) = 1
+		\item $T(n) = O(n^{\log_7{2}} \log n)$ % c = log_7 2, f(n) = 2^log_7(n)
+		\item $T(n) = O(n \log n)$ % c = log_3 9 = 2, f(n) = log_3 n!
+	\end{enumerate}
+
+\end{document}

@@ -1,0 +1,276 @@
+\documentclass[12pt,a4paper]{article}
+\input{preamble.tex}
+
+\newcommand{\name}{\textit{redacted}}
+\newcommand{\sid}{\textit{redacted}}
+\newcommand{\thistitle}{COMP3711 Assignment 1}
+
+\begin{document}
+	\lhead{\name}
+	\chead{\thistitle}
+	\rhead{\sid}
+
+	\newpage
+	\section*{Problem 1}
+		\begin{enumerate}[label=(\alph*)]
+			\item
+			\begin{enumerate}[label=(\roman*)]
+				\item \label{p1:a1}
+				For all $k > 0$, we have $T\parens*{3^k} \le T\parens*{ 3^{k-1} } + c \le T\parens*{ 3^{k-2} } + 2c \le \cdots \le T\parens*{ 3^{k - k} } + kc = 1 + kc$. Hence, $T\parens*{3^k} \le 1 + kc = O(k)$. (The constant 1 is discarded since it becomes insignificant for large $n$.)
+
+				\item \label{p1:a2}
+				We start with $n = 3^{\log_3 n} \le 3^{\ceil*{\log_3 n}}$. \footnote{Proof derivation assisted by \textit{redacted}.}
+				\begin{align*}
+					S(n) &\le S(3^{\ceil*{\log_3 n}}) & \text{since $S$ is non-decreasing}\\
+					&= O(\ceil*{\log_3 n})\\
+					&\le c \ceil*{\log_3 n} \\
+					&\le c(1 + \log_3 n) \\
+					&\le 2c\log_3 n & \text{since $n \ge 3$}\\
+					&= O\parens*{\log_3 n}
+				\end{align*}
+				
+				\item \label{p1:a3}
+				$R(n) = T(i)$ for some $1 \le i \le n$. Then $R(n) \le T\parens*{\floor*{\frac{i}{3}}} + c$. Since $1 \le \floor*{\frac{i}{3}} \le \floor*{\frac{n}{3}}$, so $T\parens*{\floor*{\frac{i}{3}}} \le \max_{1 \le \floor*{\frac{j}{3}} \le \floor*{\frac{n}{3}}} T\parens*{\floor*{\frac{j}{3}}}$ because $T\parens*{\floor*{\frac{i}{3}}}$ is either the maximum or there is some other maximum in that range (between 1 and $\floor*{\frac{n}{3}}$) greater than $T\parens*{\floor*{\frac{i}{3}}}$. Hence, $R(n) \le \max_{1 \le \floor*{\frac{j}{3}} \le \floor*{\frac{n}{3}}} = R\parens*{\floor*{\frac{n}{3}}} \le R\parens*{\floor*{\frac{n}{3}}} + c$.
+				
+				\item \label{p1:a4}
+				We first show that $R(3^k) = O(k)$. By definition, $R(1) = R(2) + 1$ and $\forall n > 2,\ R(n) \le R\parens*{\floor*{\frac{n}{3}}} + c$. It thus follows from \ref{p1:a1} that $R(3^k) = O(k)$.
+
+				Now note that $R$ is non-decreasing, since at each point, we're taking the maximum of the previous values and a new value $T(n)$. Inductively, this is implied by
+				$$R(n) = \max\parens*{R(n - 1), T(n)} \ge R(n - 1).$$
+
+				From \ref{p1:a2}, since $R(n)$ is non-decreasing over $n$ and $R(n)$ satisfies $R(3^k) = O(k)$, it follows that $R(n) = O(\log_3 n)$. This result means $R(n) \le c\log_3 n$ for some constant $c > 0$ and for large enough $n$.
+
+				Finally,
+				\begin{align*}
+					T(n) &\le \max_{1 \le i \le n}T(i) \\
+					&\le R(n) \\
+					&\le c\log_3 n \\
+					\implies T(n) &= O(\log_3 n)
+				\end{align*}
+
+			\end{enumerate}
+
+			\item
+			\begin{enumerate}[label=(\roman*)]
+				\skipitems{4}
+				\item \label{p1:b5}
+				Similar to \ref{p1:a2}, we have $n = 2^{\log_2 n} \le 2^{\ceil*{\log_2 n}}$.
+				\begin{align*}
+					S(n) &\le S\parens*{2^{\ceil*{\log_2 n}}} & \text{since $S$ is non-decreasing}\\
+					&= O\parens*{\ceil*{\log_2 n} 2^{\ceil*{\log_2 n}}} \\
+					&= c\ceil*{\log_2 n} 2^{\ceil*{\log_2 n}} \\
+					&\le c\parens{1 + \log_2 n} 2^{1 + \log_2 n} \\
+					&= 2c\parens{1 + \log_2 n}n \\
+					&\le 2c\parens{2\log_2 n}n & \text{since $n \ge 2$} \\
+					&= O\parens{n \log_2 n}
+				\end{align*}
+
+				\item \label{p1:b6}
+				Similar to \ref{p1:a3}.
+				For all $n \ge 2$, we have $R(n) = T(i)$ for some $1 \le i \le n$. Since $1 \le \floor*{\frac{i}{2}} \le \floor*{\frac{n}{2}}$ and $1 \le \ceil*{\frac{i}{2}} \le \ceil*{\frac{n}{2}}$ and hence,
+				\begin{align*}
+					R(n) &= T(i) \\
+					&\le T\parens*{ \floor*{\frac{i}{2}} } + T\parens*{ \ceil*{\frac{i}{2}} } + i \\
+					&\le \max_{1 \le \floor*{\frac{j}{2}} \le \floor*{\frac{n}{2}}} T\parens*{ \floor*{\frac{j}{2}} }
+					 	+ \max_{1 \le \ceil*{\frac{j}{2}} \le \ceil*{\frac{n}{2}}} T\parens*{ \ceil*{\frac{j}{2}} } \\
+					&= R\parens*{ \floor*{\frac{n}{2}} } + R\parens*{ \ceil*{\frac{n}{2}} } + n
+				\end{align*}
+
+				\item
+				Taking a similar approach to \ref{p1:a4}, we apply \ref{p1:b5} and \ref{p1:b6} to show that $T(n) = O(n \log_2 n)$.
+				
+				$R(n)$ is non-decreasing over $n$ for the same reason that $R(n)$ in \ref{p1:a3} is non-decreasing (proven in \ref{p1:a4}). By application of \ref{p1:b5} that $R(n) = O(n \log_2 n)$.
+
+				It follows that
+				\begin{align*}
+					T(n) &\le \max_{1 \le i \le n} T(i) \\
+					&= R(n) \\
+					&= O(n \log_2 n)
+				\end{align*}
+			\end{enumerate}
+		\end{enumerate}
+
+	\newpage
+	\section*{Problem 2}
+		\begin{enumerate}[label=(\alph*)]
+			\item $A = O(B)$. $B$ grows faster for large $n$.
+			\item $A = O(B)$. $n^n$ grows faster than $n!$, and even $(n+2)!$ since only a polynomial factor is introduced. The logarithmic base is irrelevant thanks to change of bases.
+			\item $A = \Omega(B)$. $A = 2^{4\log_5 n}$, $B = 2^{\sqrt{3 \log_2 n}}$. $A$ grows faster than $B$ for large $n$ since $4 > 3$ and the logarithm is exponentiated.
+			\item $A = \Theta(B)$. Both $A$ and $B$ are fifth-degree polynomials.
+			\item $A = \Omega(B)$. $A$ (dominated by exponential) grows faster than $B$ (polynomial) for large $n$.
+			\item $A = O(B)$. $A = \frac{n}{n+1}$ and converges to 1. $B = \ln H_n$ where $H_n$ is the $n$-th harmonic series and grows logarithmically. Since $B$ diverges to infinity, $B$ grows faster than $A$.
+			\item None of the relations are satisfied.
+		\end{enumerate}
+
+	\newpage
+	\section*{Problem 3}
+		\begin{enumerate}[label=(\alph*)]
+			\item Assume $n = 3^k$ (also $k = \log_3 n$) for non-negative integers $k$. Expanding $T(n)$...
+			\begin{align*}
+				T\parens*{3^k} &= 10T\parens*{3^{k-1}} + \parens*{3^k}^2 \\
+				&= 10 \parens*{ 10T\parens*{3^{k-2}} + \parens*{3^{k-1}}^2 } + \parens*{3^k}^2 \\
+				&= 10^{\,2} T\parens*{3^{k-2}} + 10 \parens*{3^{k-1}}^2 + \parens*{3^k}^2 \\
+				&= 10^{\,i} T\parens*{3^{k-i}} + 10^{\,i-1}\parens*{3^{k-i+1}}^2 + \cdots + 10\parens*{3^{k-1}}^2 + \parens*{3^k}^2 \\
+				&= 10^{\,k} + 10^{\,k-1}\parens*{3^{1}}^2 + \cdots + 10\parens*{3^{k-1}}^2 + \parens*{3^k}^2 \\
+				&= \sum_{i=0}^k 10^{\,k - i} \parens*{3^i}^2 \\
+				&= 10^{\,k} \sum_{i=0}^k \parens*{\frac{9}{10}}^i \\
+				&= 10^{\,k} \frac{1 - \parens*{\frac{9}{10}}^{k + 1}}{1 - \frac{9}{10}} \\
+				&= 10^{\,k + 1} \parens*{1 - \parens*{\frac{9}{10}}^{k + 1}} \\
+				&= 10^{\,k + 1} - 9^{k + 1} \\
+				&= 10^{\,(\log_3 n) + 1} - 9^{(\log_3 n) + 1} \\
+				&= 10^{\,\log_3 3n} - 9^{\log_3 3n} \\
+				&= \parens*{3^{\log_3 10}}^{\,\log_3 3n} - \parens*{3^2}^{\log_3 3n} \\
+				&= (3n)^{\log_3 10} - (3n)^2 \\
+				&= O(n^{\log_3 10})
+			\end{align*}
+
+			\item Assume $n = 4^k$ (also $k = \log_4 n$) for non-negative integers $k$. Expanding $T(n)$...
+			\begin{align*}
+				T\parens*{4^k} &= 16T\parens*{4^{k-1}} + \parens*{4^k}^2 \\
+				&= 16^{\,k} + 16^{\,k-1}\parens*{4^{1}}^2 + \cdots + 16\parens*{4^{k-1}}^2 + \parens*{4^k}^2 \\
+				&= \sum_{i=0}^k 16^{\,k - i} \parens*{4^i}^2 \\
+				&= \sum_{i=0}^k 16^{\,k} \\
+				&= (k + 1)16^{\,k} \\
+				&= ((\log_4 n) + 1)16^{\,\log_4 n} \\
+				&= ((\log_4 n) + 1)n^2 \\
+				&= ((\log_4 n) + 1)n^2 \\
+				&= n^2 \log_4 n + n^2 \\
+				&= O(n^2 \log_4 n)
+			\end{align*}
+		\end{enumerate}
+
+	\newpage
+	\section*{Problem 4}
+		\begin{enumerate}[label=(\alph*)]
+			\item
+			Algorithm\footnotemark:
+			\begin{algorithm}
+				\begin{algorithmic}[1]
+					\caption{StockProfitSolver}\label{alg:p4}
+					\Function{StockProfitSolver}{$A$, $n$}
+						\State $V_{max} \gets -\infty,\ X_{min} \gets 0,\ X \gets 0,\ V \gets 0$
+						\State $i_l \gets -1,\ i_{lbest} \gets -1,\ i_{rbest} \gets -1$
+						\For{$i \gets 1$ \textbf{to} $n$}
+							\State $X \gets X + A[i]$
+							\State $V \gets V + A[i]$
+							\If{$i_l = -1$}
+								\State $i_l \gets i$
+								\Comment{Start a new span if not in one}
+							\EndIf
+							\If{$V > V_{max}$}
+								\Comment{Check if we've hit a new high}
+								\State $V_{max} \gets V$
+								\Comment{Update current best sum to $V$}
+								\State $i_{lbest} \gets i_l$
+								\State $i_{rbest} \gets i$
+								\Comment{Update current best span to $(i_l,\ i)$}
+							\EndIf
+							\If{$X < X_{min}$}
+								\Comment{This is a new low...}
+								\State $X_{min} \gets X$
+								\Comment{Update the new low}
+								\State $V \gets 0$
+								\Comment{Reset $V$ and $i_l$}
+								\State $i_l \gets -1$
+							\EndIf
+						\EndFor
+						\If{$V_{max} < 0$}
+							\Comment{Best profit is a loss}
+							\State \textbf{return} ``no way''
+							\Comment{:(}
+						\EndIf
+						\State \textbf{return} ($i_{lbest}$, $i_{rbest}$)
+					\EndFunction
+				\end{algorithmic}
+			\end{algorithm}
+
+			\footnotetext{Adapted from the $O(n)$ pseudocode from the max subarray lecture notes, with modifications for the stock-profit problem.}
+
+			This algorithm makes one pass through array $A$. It keeps track of the best high ($V_{max}$), moving high ($V$), global low ($X_{min}$), incremental sum ($X$), best left index ($i_{lbest}$), temporary left index ($i_l$), and best right index ($i_{rbest}$).
+
+			For each element, it first updates the moving high ($V$) and incremental sum ($X$) by adding the current element to both.
+
+			It then initialises the temporary left index $i_l$, if it hasn't already been initialised. We use -1 to indicate that the index is invalid and uninitialised. A valid index would be between 1 and $n$ inclusive.
+
+			We then check to see if the new $V$ is better than supposed ``best high'' $V_{max}$, and if so, perform an update to $V_max$. Here, we also update the best pair $i_{lbest},\ i_{rbest}$. This is the pair we will be returning at the end of the function. We update the left bound $i_{lbest}$ with the temporary index $i_l$. (Note that $i_l$ would be a valid index at this point since it's already been initialised (either on this iteration or some iteration before).) We also update the right bound to the current index $i$, since the new $V$ was updated on the same iteration.
+
+			Next we check if a new global low has been reached ($X < X_{min}$). If true, then we could find a better solution by resetting, instead of carrying on with the current state. So we reset $V$ to 0, $i_l$ to -1, and update $X_{min}$ with $X$.
+
+			\item
+			We already know that the max subarray problem could be correctly solved using lines 2, 4, 5, 6, 10, 11, 14, 15, 16, 17, 19, and 20. The idea that is carried across is of the sum of the subarray, and the new additions are the variables storing the left and right indices of the best subarray.
+
+			We know that $i_l \le i$ (or $i_l = -1$ if invalid), since $i_l$ is set to $i$ in line 8. In lines 12-13, we set $i_{lbest}$ to $i_l$ and $i_{rbest}$ to $i$, so naturally we have $i_{lbest} \le i_{rbest}$; and this satisfies the constraint set by the problem.
+
+			\item
+			The algorithm makes one pass through the for-loop. The comparisons and assignments in each iteration can be bounded by a constant $c > 0$. For large enough $n$ (the size of $A$), this constant becomes insignificant. Thus, we have $T(n) + c = O(n)$.
+		\end{enumerate}
+
+	\newpage
+	\section*{Problem 5}
+		\begin{enumerate}[label=(\alph*)]
+			\item Algorithm for finding a local minimum\footnotemark:
+			\begin{algorithm}[h!]
+				\begin{algorithmic}[1]
+					\caption{Local Minimum Search}\label{alg:p5}
+						\Function{LocalMinimumSearch}{$A$, $l$, $r$, $n$}
+							\State $m \gets \floor*{\frac{l + r}{2}}$
+							\If{($m = 0$ or $A[m-1] \ge A[m]$)
+								\Comment{$A[m]$ is locally minimal from left}
+								\\\hskip3em and ($m = n - 1$ or $A[m] \le A[m + 1]$)}
+								\Comment{$A[m]$ is locally minimal from right}
+								\State \textbf{return} m \Comment{Terminate and return index}
+							\ElsIf{$m > 0$ and $A[m - 1] < A[m]$}
+								\State \textbf{return} \textproc{LocalMinimumSearch}($A$, $l$, $m - 1$, $n$)
+								\Comment{Recurse on left subarray}
+							\Else \Comment{($m < n - 1$ and $A[m] > A[m + 1]$)}
+								\State \textbf{return} \textproc{LocalMinimumSearch}($A$, $m + 1$, $r$, $n$)
+								\Comment{Recurse on right subarray}
+							\EndIf
+						\EndFunction
+				\end{algorithmic}
+			\end{algorithm}
+
+			First call: \textproc{LocalMinimumSearch}($A$, 0, $n - 1$, $n$), where $n$ is the length $A$.
+
+			\footnotetext{Algorithm sourced from \url{https://www.geeksforgeeks.org/find-local-minima-array/}. Note that the pseudocode shown here uses $\le$ and $\ge$ in the first condition (lines 3-4) whereas the code in GeeksforGeeks uses strict inequalities.}
+
+			\item
+			Let $s$ be the number of elements considered in the ``current'' search, $A[l..r]$, with $s = r - l + 1$. We will prove the correctness of the algorithm by induction over $s$.
+
+			$I(s)$: For every array $A$ and all $l \le r \le n$ with $r - l + 1 = s$, then \textproc{LocalMinimumSearch}($A$, $l$, $r$, $n$) returns $i \in [l..r]$ such that $A[i]$ is locally minimal.
+			
+			$A[i]$ is locally minimal if any of the following are true:
+			\begin{enumerate}[label=\arabic*., noitemsep]
+				\item \label{localmin:1} $i = 0$ and $i = n - 1$
+				\item \label{localmin:2} $i = 0$ and $A[i] \le A[i + 1]$
+				\item \label{localmin:3} $i = n - 1$ and $A[i - 1] \ge A[i]$
+				\item \label{localmin:4} $A[i - 1] \ge A[i]$ and $A[i] \le A[i + 1]$
+			\end{enumerate}
+
+			\textbf{Base Case} ($s = 1$ or $A[m]$ is locally minimal). If $n = 1$, then we have $m = l = r = 0 = n - 1$. This fulfills the \hyperref[localmin:1]{first type} of local minimum.  and the function correctly returns 0.
+			
+			For $n > 1$, we need to consider the \hyperref[localmin:2]{three other cases} where $A[m]$ is a local minimum. By assumption $A[m]$ is a local minimum, and Algorithm~\ref{alg:p5} handles this and correctly returns $m$.
+
+			\textbf{General Case} ($s > 1$ and $A[m]$ is not locally minimal). We assume $I(s)$ to be true for smaller $s$.
+			
+			There are two cases to consider here:
+			\begin{enumerate}[label=\arabic*., noitemsep]
+				\item $A[m - 1] < A[m]$, in which case a local minimum exists\footnotemark \ on the left subarray \mbox{$A[l..m-1]$}. We perform recursion and return the result from \textproc{LocalMinimumSearch}($A$, $l$, $m - 1$, $n$). Since this is a subproblem with smaller $s$ ($= m - l$), the correct answer is returned.
+				\item $A[m] > A[m + 1]$, in which case a local minimum exists\footnotemark[\value{footnote}] on the right subarray \mbox{$A[m+1..r]$}. Similar to the first case, we return the result from the subproblem \textproc{LocalMinimumSearch}($A$, $m + 1$, $r$ $n$). Since $s$ is smaller, the correct answer is returned.
+			\end{enumerate}
+		
+			Hence, $I(s)$ is true for all $s$.
+
+			\footnotetext{
+				We can show that a local minimum exists in the subarray $A[l..m-1]$ using induction (again). We first assume that a local minimum exists in $A[l..r]$. Now after splitting $A$, if $A[l..m-1]$ contains only one element, then since $A[m - 1] < A[m]$, the local minimum exists and is $A[m - 1]$.
+
+				We assume then, that since $A[m - 1]$ isn't a local minimum, then $A[m - 2] < A[m - 1]$. And we inductively test $A[m-i]$ down until $A[l]$ if necessary. Thus a local minimum exists. The same reasoning goes for the right subarray $A[m + 1..r]$.
+			}
+
+			\item We have $T(1) = 1$ and $\forall s > 1.\ T(s) \le T\parens*{\floor*{\frac{s}{2}}} + c$, where $c > 0$ is a constant denoting an arbitrary number of comparisons, bounded by $O(1)$. An inequality was used for the general $T(s)$ case since there is the possibility that the local minimum is found on the first iteration or on the last iteration.
+			
+			By the master theorem, since we have $c = \log_2 1 = 0$ and $f(s) = O(1)$, thus $T(s) = O(\log s)$.
+			
+		\end{enumerate}
+
+\end{document}

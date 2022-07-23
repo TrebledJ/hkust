@@ -1,0 +1,35 @@
+\documentclass[12pt,a4paper]{article}
+\input{preamble.tex}
+
+\newcommand{\name}{\textit{redacted}}
+\newcommand{\sid}{\textit{redacted}}
+\newcommand{\thistitle}{COMP3711 PA1}
+
+\begin{document}
+	\lhead{\name}
+	\chead{\thistitle}
+	\rhead{\sid}
+
+\newpage
+\section*{Problem 1}
+
+\begin{enumerate}
+	\item
+	\begin{align*}
+		\textproc{Win}(\vec{x})=
+		\begin{cases}
+			\textbf{F} & \text{if } \vec{x} = (1, 0, \dots, 0) \\
+			\bigvee_{\vec{x'} \in \textproc{Next}(\vec{x})} 
+			\lnot\parens*{\textproc{Win}(\vec{x'})} & \text{otherwise}
+		\end{cases}
+	\end{align*}
+
+	\item
+	The recurrence is split into two cases: the base case with $\vec{x} = (1, 0, \dots, 0)$ and the recursive case, where we check if a losing position exists from any valid move. For the base case, it is quite clear that the only move is to bite the poisoned piece and lose.
+
+	To reiterate the general observation in the assignment's description:
+	$\vec{x}$ is a winning position iff there exists a losing position $\vec{x'}$ such that $\vec{x} \to \vec{x'}$ is a legal move. In the recursive case, if some $\vec{x'} \in \textproc{Next}(\vec{x})$ is a losing position, then $\lnot\textproc{Win}(\vec{x'}) = \textbf{T}$ and thus, $$\textproc{Win}(\vec{x}) = \bigvee_{\vec{x'} \in \textproc{Next}(\vec{x})} \lnot\parens*{\textproc{Win}(\vec{x'})} = \textbf{T}.$$ Note that the recursion converges to the base case $\vec{x} = (1, 0, \dots, 0)$ since a legal move yields a strictly decreasing measure of less chocolate squares (per the game description).
+
+\end{enumerate}
+	
+\end{document}

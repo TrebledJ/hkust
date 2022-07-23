@@ -1,0 +1,7 @@
+
+=== Test case 21 ===
+
+bst1.getBetweenRange Result Length: 3
+|33|55|77|
+bst2.getBetweenRange Result Length: 2
+|1|22|

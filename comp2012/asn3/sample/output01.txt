@@ -1,0 +1,14 @@
+
+=== Test case 1 ===
+
+add ("e", 55): true
+add ("a", 11): true
+add ("c", 33): true
+add ("g", 77): true
+
+~bst1~
+		(g)
+(e)
+				(c)
+		(a)
+

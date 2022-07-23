@@ -1,0 +1,205 @@
+Welcome to the financial management system! ^_^
+Let's start by initializing your account
+Initialization of account succeed! There are two ledger: Income and Expenses.
+==========Account Summary==========
+Maximum #. transactions allowed for each ledger: 100
+Current #. transactions allowed for each ledger: 100
+Current bank balance: 1000
+Current credit card balance: 1000
+Current cash balance: 1000
+
+
+Now you have got a salary of 3000 dollars from your part-time job, paid directly to your bank account.
+Let's add this record into the income ledger! ^_^
+
+Let test our legders by removing an arbitrary transaction from the empty ledger.
+Error! No transactions in this ledger!
+Income with amount 5000 dated 11/10/2020 initialized.
+Identify where this income goes to...
+5000 added into Bank.
+Transaction amount 5000 added
+
+As this is around the end of the year, and you receive annual bonus in form of double pay! Hurray!!
+Let's update our ledger! ^_^
+Note: the double pay is calculated as = salary * 2
+
+Identify where this income goes to...
+The transaction amount has been multiplied 2 times.
+Identify where this income goes to...
+Let's inspect the modified transaction.
+=====================================
+Income: Part time salary
+Income Date: 11/10/2020
+Amount: 10000
+Has been realized?: 1
+Amount added into: Bank
+=====================================
+
+To award your hard work, it is a good idea to buy yourself some snacks to enjoy! :D
+So you have decided to spend around 150 dollars in CASH on snacks.
+Let's update our ledger! ^_^
+
+Expense with amount -150 dated 11/10/2020 initialized. 
+Identify where this expense goes to...
+-150 added into Cash.
+Transaction amount -150 added
+
+You have realized next month will be your friend's birthday, so you decide to spare around 150 dollars to prepare him a present!
+This 150 dollars should now rest in your bank account for the time being. Nonetheless, you would like to record this down in ledger as unrealized expense as well.
+
+Expense with amount -150 dated 11/10/2020 initialized.
+Identify where this expense goes to...
+-150 added into Bank.
+Transaction amount -150 added
+
+OK. So now you want to take a look at the first 2 transactions at expense ledger.
+=====================================
+Expenses: Friend's birthday presents
+Expenses Date: 11/10/2020
+Amount: -150
+Has been realized?: 0
+Amount added into: Bank
+=====================================
+=====================================
+Expenses: Snack expenses
+Expenses Date: 11/10/2020
+Amount: -150
+Has been realized?: 1
+Amount added into: Cash
+=====================================
+
+When around the end of month, you would like to have a summary of what your incomes and expenses incurred this month. This allows you to better inspect your financial status.   
+Let's print all incomes!
+
+=====================================
+Income: Part time salary
+Income Date: 11/10/2020
+Amount: 10000
+Has been realized?: 1
+Amount added into: Bank
+=====================================
+
+Let's print all expenses!
+=====================================
+Expenses: Snack expenses
+Expenses Date: 11/10/2020
+Amount: -150
+Has been realized?: 1
+Amount added into: Cash
+=====================================
+=====================================
+Expenses: Friend's birthday presents
+Expenses Date: 11/10/2020
+Amount: -150
+Has been realized?: 0
+Amount added into: Bank
+=====================================
+
+But wait, some transactions are actually not realized yet...Let's find out what are they! ^_^
+Retrieving unrealized incomes...
+There is no unrealized transaction.
+Retrieving unrealized expenses...
+=====================================
+Expenses: Friend's birthday presents
+Expenses Date: 11/10/2020
+Amount: -150
+Has been realized?: 0
+Amount added into: Bank
+=====================================
+
+You have just seen the advertisement of a new video game and you feel interested in it.
+You wish to buy but you know you should not be spending too much.
+Thus, you've decided to NOT buying the snacks, and use that money to buy the video game. 
+The video game costs 200 dollars. You decide to pay in cash. Let's update the ledger ^_^.
+
+Expense with amount -200 dated 20/10/2020 initialized.
+Identify where this expense goes to...
+Identify where this expense goes to...
+Expenses with -150 dollars on 11/10/2020 deleted.
+Transaction with -150 dollars on 11/10/2020 deleted.
+Successfully updated.
+
+Finally, let's take a look at what you have left.
+Printing Balances
+Bank: 10850
+Credit Card: 1000
+Cash: 800
+
+After a while, when you are trying to play the newly bought video game, it does not work at all.
+So you decide to return it and ask back for full refund, as guaranteed on the packages.
+You need to remove this transaction from ledger as well.
+Identify where this expense goes to...
+Expenses with -200 dollars on 20/10/2020 deleted.
+Transaction with -200 dollars on 20/10/2020 deleted.
+An transaction has been removed successfully.
+
+In the following, we present you the error messages you need to include to prevent your program from running into troubles.
+It also demonstrates some sample outputs of the functions.
+
+Test # 1
+Expense with amount -200 dated 20/10/2020 initialized.
+New and Old transaction types not matching!
+Fail to insert records!
+
+Test # 2
+Income with amount 5000 dated 11/10/2020 initialized.
+Identify where this income goes to...
+5000 added into Bank.
+Transaction amount 5000 added
+
+Test # 3
+Expense with amount -300 dated 16/10/2020 initialized.
+Identify where this expense goes to...
+-300 added into Credit Card.
+Transaction amount -300 added
+
+Test # 4
+Wrong transaction number! Cannot retrieve transactions!
+
+Test # 5
+Expense with amount -1e+009 dated 15/10/2020 initialized.
+Identify where this expense goes to...
+Oh no! Not enough money to spend! :(
+Expenses with -1e+009 dollars on 15/10/2020 deleted.
+Transaction with -1e+009 dollars on 15/10/2020 deleted.
+
+Final clean ups
+=====================================
+Income: Part time salary
+Income Date: 11/10/2020
+Amount: 10000
+Has been realized?: 1
+Amount added into: Bank
+=====================================
+=====================================
+Income: Part time salary
+Income Date: 11/10/2020
+Amount: 5000
+Has been realized?: 1
+Amount added into: Bank
+=====================================
+=====================================
+Expenses: Friend's birthday presents
+Expenses Date: 11/10/2020
+Amount: -150
+Has been realized?: 0
+Amount added into: Bank
+=====================================
+=====================================
+Expenses: Other expenses
+Expenses Date: 16/10/2020
+Amount: -300
+Has been realized?: 1
+Amount added into: Credit Card
+=====================================
+Expenses with -200 dollars on 20/10/2020 deleted.
+Transaction with -200 dollars on 20/10/2020 deleted.
+Income with 10000 dollars on 11/10/2020 deleted.
+Transaction with 10000 dollars on 11/10/2020 deleted.
+Income with 5000 dollars on 11/10/2020 deleted.
+Transaction with 5000 dollars on 11/10/2020 deleted.
+Expenses with -150 dollars on 11/10/2020 deleted.
+Transaction with -150 dollars on 11/10/2020 deleted.
+Expenses with -300 dollars on 16/10/2020 deleted.
+Transaction with -300 dollars on 16/10/2020 deleted.
+All account records deleted.
