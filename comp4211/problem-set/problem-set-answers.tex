@@ -1,0 +1,357 @@
+\input{preamble}
+
+\renewcommand\arraystretch{0.8}
+
+\begin{document}
+\lhead{\textit{redacted}}
+\chead{COMP4211 Problem Set}
+\rhead{\textit{redacted}}
+
+\section{Linear Regression}
+\begin{enumerate}[label=(\alph*)]
+	\item
+	      For the $d = 1$ case, we take the derivative of the loss function $L$ w.r.t. $w_0$ and $w_1$ and set them to 0 to get
+	      the following two equations:
+	      \begin{align*}
+		      \sum_k^N y^{(k)}           & = Nw_0 + w_1 \sum_k^N x_1^{(k)}                                     \\
+		      \sum_k^N x_1^{(k)} y^{(k)} & = w_0 \sum_k^N x_1^{(k)} + w_1 \sum_k^N \left( x_1^{(k)} \right)^2.
+	      \end{align*}
+	      In general for $d > 1$, the second equation is similar for the other derivatives.
+	      \begin{align*}
+		      \sum_k^N y^{(k)}           & = Nw_0 + \sum_{j=1}^d w_j \sum_k^N x_j^{(k)}                                                         \\
+		      \sum_k^N x_i^{(k)} y^{(k)} & = w_0 \sum_k^N x_i^{(k)} + \sum_{j=1}^d w_j \sum_k^N x_j^{(k)} x_i^{(k)} & \text{for } 1 \le i \le d
+	      \end{align*}
+	      To solve for $\bm{w}$, we can write the above equations in matrix form and factor out $\bm{w}$.
+	      \begin{align*}
+		      \begin{bmatrix}
+			      1 & 1 & \cdots & 1
+		      \end{bmatrix}
+		      \begin{bmatrix}
+			      y^{(1)} \\ y^{(2)} \\ \vdots \\ y^{(N)}
+		      \end{bmatrix}
+		       & =
+		      \begin{bmatrix}
+			      N & \sum_k^N x_1^{(k)} & \cdots & \sum_k^N x_d^{(k)}
+		      \end{bmatrix}
+		      \begin{bmatrix}
+			      w_0 \\ w_1 \\ \vdots \\ w_d
+		      \end{bmatrix}
+		      \\
+		      \begin{bmatrix}
+			      x_i^{(1)} & x_i^{(2)} & \cdots & x_i^{(N)}
+		      \end{bmatrix}
+		      \begin{bmatrix}
+			      y^{(1)} \\ y^{(2)} \\ \vdots \\ y^{(N)}
+		      \end{bmatrix}
+		       & =
+		      \begin{bmatrix}
+			      \sum_k^N x_i^{(k)} & \sum_k^N x_1^{(k)} x_i^{(k)} & \cdots & \sum_k^N x_d^{(k)} x_i^{(k)}
+		      \end{bmatrix}
+		      \begin{bmatrix}
+			      w_0 \\ w_1 \\ \vdots \\ w_d
+		      \end{bmatrix}
+		       & 1 \le i \le d
+		      \\
+		      \therefore
+		      \begin{bmatrix}
+			      1         & 1         & \cdots & 1         \\
+			      x_1^{(1)} & x_1^{(2)} & \cdots & x_1^{(N)} \\
+			      \vdots    & \vdots    & \ddots & \vdots    \\
+			      x_d^{(1)} & x_d^{(2)} & \cdots & x_d^{(N)} \\
+		      \end{bmatrix}
+		      \begin{bmatrix}
+			      y^{(1)} \\ y^{(2)} \\ \vdots \\ y^{(N)}
+		      \end{bmatrix}
+		       & =
+		      \begin{bmatrix}
+			      N                  & \sum_k^N x_1^{(k)}           & \cdots & \sum_k^N x_d^{(k)}           \\
+			      \sum_k^N x_1^{(k)} & \sum_k^N x_1^{(k)} x_1^{(k)} & \cdots & \sum_k^N x_d^{(k)} x_1^{(k)} \\
+			      \vdots             & \vdots                       & \ddots & \vdots                       \\
+			      \sum_k^N x_d^{(k)} & \sum_k^N x_1^{(k)} x_d^{(k)} & \cdots & \sum_k^N x_d^{(k)} x_d^{(k)} \\
+		      \end{bmatrix}
+		      \begin{bmatrix}
+			      w_0 \\ w_1 \\ \vdots \\ w_d
+		      \end{bmatrix}
+	      \end{align*}
+	      This can be succinctly expressed as
+	      \[
+		      \bm{X}^T \bm{y} = \bm{X}^T \bm{X} \bm{w}
+	      \]
+	      where
+	      \[
+		      \bm{X} = \begin{bmatrix}
+			      1      & x_1^{(1)} & \cdots & x_d^{(1)} \\
+			      1      & x_1^{(2)} & \cdots & x_d^{(2)} \\
+			      \vdots & \vdots    & \ddots & \vdots    \\
+			      1      & x_1^{(N)} & \cdots & x_d^{(N)} \\
+		      \end{bmatrix}
+		      ,
+		      \qquad
+		      \bm{y} = \begin{bmatrix}
+			      y^{(1)} \\ y^{(2)} \\ \vdots \\ y^{(N)}
+		      \end{bmatrix}
+		      ,
+		      \qquad \text{ and }
+		      \bm{w} = \begin{bmatrix}
+			      w_0 \\ w_1 \\ \vdots \\ w_d
+		      \end{bmatrix}.
+	      \]
+	      Assuming $\bm{X}^T \bm{X}$ is invertible, we get the
+	      least squares estimate:
+	      \[
+		      \bm{w} = (\bm{X}^T \bm{X})^{-1} \bm{X}^T \bm{y}.
+	      \]
+
+	\item The weight update rule can be obtained by taking the negative gradient
+	      of the loss function. From slide 9, the gradient of $L(\bm{w}, \bm{S})$ is
+	      \[
+		      \frac{\partial L}{\partial \bm{w}} = 2\bm{X}^T \bm{X} \bm{w} - 2\bm{X}^T \bm{y}
+	      \]
+	      Thus, we have the gradient update rule
+	      \begin{align*}
+		      \bm{w} & \leftarrow \bm{w} - \eta\left(\bm{X}^T \bm{X} \bm{w} - \bm{X}^T \bm{y}\right)
+	      \end{align*}
+	      where $\eta$ is a tunable learning rate. (The 2 doesn't matter since it's a constant factor.)
+\end{enumerate}
+
+\newpage
+\section{Logistic Regression}
+
+\begin{enumerate}[label=(\alph*)]
+	\item With binary classification, we use the sigmoid $\sigma$ activation function:
+	      \[\sigma(z) = \frac{1}{1 + e^{-z}}\]
+	      with $z = \bm{w}^T \bm{\hat x}, \ \bm{\hat x} = (x_0, x_1, \dots x_d)$.
+
+	      With multiclass classification, we have a set of weights \textit{for each class}.
+	      This means we can apply sigmoid with $z = \bm{w}_i^T \bm{\hat x}$ where each
+	      $\bm{w}_i$ are the weights for class $C_i$.
+
+	      Applying sigmoid for each class of weights, we get
+	      \[ \sigma(\bm{W} \bm{\hat x}) = \bm{r} \in (0, 1)^K \]
+	      where $K$ is the number of classes and $\bm{W}$ are the weights,
+	      with the $k$-th row being the weights of class $C_i$.
+
+	      Intuitively, we want the activation output of $\bm{w}_i \bm{\hat x}$ to be close to
+	      the actual class $C_i$. That is, $\sigma(\bm{w}_i^T \bm{\hat x}^{(\ell)}) = y_i^{(\ell)}$.
+
+	      %   Let $f(\bm{W}; \bm{x}^{(\ell)}) = \sigma(\bm{W} \bm{\hat x}^{(\ell)})$.
+	      Taking a hint from the likelihood function for binary classification, we derive a similar likelihood.
+	      %   \begin{align*}
+	      %       \prod_{\ell}^N \prod_{i}^K f(\bm{W}; \bm{x}^{(\ell)})^{y_i^{(\ell)}} (1 - f(\bm{W}; \bm{x}^{(\ell)}))^{1 - y_i^{(\ell)}}
+	      %   \end{align*}
+	      \begin{align*}
+		      \prod_{\ell}^N \prod_{i}^K f(\bm{w}_i; \bm{x}^{(\ell)})^{y_i^{(\ell)}} (1 - f(\bm{w}_i; \bm{x}^{(\ell)}))^{1 - y_i^{(\ell)}}
+	      \end{align*}
+	      with the log likelihood (our loss function) being
+	      \[
+		      L(\bm{W}, \bm{x}) = -\sum_{\ell}^N \sum_{i}^K y_i^{(\ell)} \log f(\bm{w}_i; \bm{x}^{(\ell)}) + (1 - y_i^{(\ell)}) \log (1 - f(\bm{w}_i; \bm{x}^{(\ell)}))
+	      \]
+
+	\item With the formulation from slide 17, the sum of the $K$ outputs equal 1. The formulation considers
+	      the total ratio of output and is biased towards dominant values (since we take the exponent $e^{z_j}$).
+	      With the formulation presented above, \textit{each} output is in $(0, 1)$, so the sum is not fixed.
+
+	\item With multiclass classification, since we want to find one and only label which
+	      the data belongs to, it's more appropriate to use softmax, since usually one class will dominate the loss.
+
+	      The alternative formulation presented here may be more suitable for multilabel classification,
+	      which aims to identify multiple labels (i.e. not limited to one) applicable to a sample.
+		  For example, we can set some threshold value so that the output classes surpassing that threshold
+		  threshold are used as labels.
+\end{enumerate}
+
+
+\newpage
+\section{Feedforward Neural Network}
+
+\begin{enumerate}
+	\item
+	      \begin{align*}
+		      \sigma(x) & = \frac{1}{1 + e^{-x}}                                                                            \\
+		      \tanh(x)  & = \frac{e^{x} - e^{-x}}{e^x + e^{-x}}                                                             \\
+		                & = \frac{e^x + e^{-x} - 2e^{-x}}{e^x + e^{-x}} & \text{add an imaginary } e^{-x} \text{ term}      \\
+		                & = 1 - \frac{2e^{-x}}{e^x + e^{-x}}                                                                \\
+		                & = 1 - \frac{2}{e^{2x} + 1}                    & \text{multiply numerator and denominator by } e^x \\
+		                & = 1 - 2\sigma(-2x)
+	      \end{align*}
+
+	\item
+	      \begin{align*}
+		      \sigma(x)  & = \frac{1}{1 + e^{-x}}                            \\
+		      \sigma'(x) & = \frac{e^{-x}}{(1 + e^{-x})^2}                   \\
+		                 & = \sigma(x) \frac{e^{-x}}{1 + e^{-x}}             \\
+		                 & = \sigma(x) \frac{1 + e^{-x} - 1}{1 + e^{-x}}     \\
+		                 & = \sigma(x) \left(1 - \frac{1}{1 + e^{-x}}\right) \\
+		                 & = \sigma(x) (1 - \sigma(x))                       \\
+		      \tanh(x)   & = 1 - 2\sigma(-2x)                                \\
+		                 & = 4\sigma'(-2x)                                   \\
+		                 & = 4\sigma(-2x)(1 - \sigma(-2x))
+	      \end{align*}
+
+	\item
+	      The weight update rules for three layers use the previous weights with
+	      \begin{align*}
+		      \Delta w^{[2]} & = -\eta \sum_q z^{[1](q)} \sum_\ell \cdots w^{[3]} \cdots \\
+		      \Delta w^{[1]} & = -\eta \sum_q x^{(q)} \sum_\ell \cdots w^{[2]} \cdots
+	      \end{align*}
+	      where $\cdots$ represent a bunch of other factors.
+
+	      The issue is that the weights are all multiplied onto each other, meaning the weights will blow up and changes will likely be drastic.
+	      Additionally, the weights in each layer will fluctuate immensely as we apply these weights.
+
+	      Since we're considering units with $\tanh$, another downside is that the large values will saturate, so it becomes hard to differentiate between two nodes.
+	      This means we don't get too much meaningful value out of activation and it's difficult to differentiate between different nodes.
+
+	\item
+	      In the forward pass, we compute $z = g(\sum wx)$ (a lot of details are stripped, but the general idea remains the same).
+	      Since we're supposing $g = \tanh$ and have $w = 0$, so $z = 0$ as well.
+
+	      In the weight update rules, we have $\Delta w = \eta \sum \delta z$.
+	      Since all $z = 0$, so all $\Delta w = 0$ as well, and so the weights don't change at all,
+	      and the model doesn't learn.
+
+\end{enumerate}
+
+
+\newpage
+\section{Convolutional Neural Networks}
+
+\begin{enumerate}[label=(\alph*)]
+	\item
+	      \begin{enumerate}[label=(\roman*)]
+		      \item The feature map would have size $\floor{\frac{227 + 2p - w}{s} + 1} = \floor{\frac{227 + 4 - 7}{2} + 1} = 113$.
+		      \item $(128 \times 7 \times 7 + 1) \times 64 = 401472$ parameters.
+	      \end{enumerate}
+	\item
+	      \begin{enumerate}[label=(\roman*)]
+		      \item Size $\floor{\frac{227 + 0 - 1}{1} + 1} = 227$.
+		      \item $(128 \times 1 \times 1 + 1) \times 16 = 2064$ parameters.
+		      \item Unchanged, with size $\floor{\frac{227 + 4 - 7}{2} + 1} = 113$.
+		      \item $(16 \times 7 \times 7 + 1) \times 64 = 50240$ parameters.
+		      \item $1 - \frac{50240 + 2064}{401472} \approx 86.97\%$ reduction, $13.03\%$ kept.
+	      \end{enumerate}
+\end{enumerate}
+
+\newpage
+\section{Principal Component Analysis}
+\begin{enumerate}[label=(\alph*)]
+	\item
+	      \begin{align*}
+		      \bm{\mu} & = \begin{bmatrix}
+			                   \frac{2 + 3 + 4 + 5 + 6 + 7}{6} \\
+			                   \frac{1 + 5 + 3 + 6 + 7 + 8}{6}
+		                   \end{bmatrix}
+		      \\
+		               & = \begin{bmatrix}
+			                   4.5 \\ 5
+		                   \end{bmatrix}
+	      \end{align*}
+
+	\item
+	      \begin{align*}
+		      \mathcal{S} - \bm{\mu} & = \left\{
+		      \begin{bmatrix} -2.5 \\ -4 \end{bmatrix},\
+		      \begin{bmatrix} -1.5 \\ 0 \end{bmatrix},\
+		      \begin{bmatrix} -0.5 \\ -2 \end{bmatrix},\
+		      \begin{bmatrix} 0.5 \\ 1 \end{bmatrix},\
+		      \begin{bmatrix} 1.5 \\ 2 \end{bmatrix},\
+		      \begin{bmatrix} 2.5 \\ 3 \end{bmatrix}
+		      \right\}
+	      \end{align*}
+
+	\item
+	      \[
+		      \bm{\Sigma} = \begin{bmatrix}
+			      3.5 & 4.4 \\
+			      4.4 & 6.8
+		      \end{bmatrix}
+	      \]
+
+	\item
+	      \[ \bm{W} = \begin{bmatrix}
+			      0.450798 & 9.849203
+		      \end{bmatrix}
+	      \]
+
+	      \begin{lstlisting}[style=custom_python,gobble=12]
+			import numpy as np
+			from math import *
+
+			S = np.array([(2, 1), (3, 5), (4, 3), (5, 6), (6, 7), (7, 8)])
+			mu = S.mean(axis=0)
+
+			print('covariance:')
+			cov = np.cov(S.T)
+			print(cov)
+
+			print('eigenvalues:')
+			w, _ = np.linalg.eig(cov)
+			print(w)
+		  \end{lstlisting}
+
+	\item After taking the first principal component and projecting
+	      $\mathcal{S}$ to one dimension, our proportion of variance is
+	      \[
+		      \frac{9.849203}{9.849203 + 0.450798}
+		      \approx 95.6\%
+	      \]
+
+\end{enumerate}
+
+\newpage
+\section{Clustering -- Partitional Clustering}
+
+\begin{enumerate}[label=(\alph*)]
+	\item
+	      \begin{itemize}
+		      \item $p_1$: \textbf{distance to (4, 2): 5.000}; {distance to (11, 3): 11.180340}
+		      \item $p_2$: \textbf{distance to (4, 2): 3.162}; {distance to (11, 3): 10.000000}
+		      \item $p_3$: \textbf{distance to (4, 2): 2.828}; {distance to (11, 3): 9.055385}
+		      \item $p_4$: \textbf{distance to (4, 2): 2.000}; {distance to (11, 3): 5.099020}
+		      \item $p_5$: \textbf{distance to (4, 2): 3.606}; {distance to (11, 3): 5.000000}
+		      \item $p_6$: {distance to (4, 2): 4.123}; \textbf{distance to (11, 3): 3.000000}
+		      \item $p_7$: {distance to (4, 2): 5.099}; \textbf{distance to (11, 3): 2.828427}
+	      \end{itemize}
+
+	\item
+	      $C_1$ points: $\{(0, 5), (1, 3), (2, 4), (6, 2), (7, 0)\}$.\\
+	      $C_1$ median: $(2, 4)$. \\
+	      $C_2$ points: $\{(8, 3), (9, 1)\}$.\\
+	      $C_2$ median: $(8.5, 2)$.
+
+	\item
+	      \begin{itemize}
+		      \item $p_1$ \textbf{distance to (2, 4): 2.236}; {distance to (8.5, 2): 9.013878}
+		      \item $p_2$ \textbf{distance to (2, 4): 1.414}; {distance to (8.5, 2): 7.566373}
+		      \item $p_3$ \textbf{distance to (2, 4): 0.000}; {distance to (8.5, 2): 6.800735}
+		      \item $p_4$ {distance to (2, 4): 4.472}; \textbf{distance to (8.5, 2): 2.500000}
+		      \item $p_5$ {distance to (2, 4): 6.403}; \textbf{distance to (8.5, 2): 2.500000}
+		      \item $p_6$ {distance to (2, 4): 6.083}; \textbf{distance to (8.5, 2): 1.118034}
+		      \item $p_7$ {distance to (2, 4): 7.616}; \textbf{distance to (8.5, 2): 1.118034}
+	      \end{itemize}
+
+	\item
+	      $C_0$ points: \{(0, 5), (1, 3), (2, 4)\} \\
+	      $C_0$ median: (1, 3) \\
+	      $C_1$ points: \{(6, 2), (7, 0), (8, 3), (9, 1)\} \\
+	      $C_1$ median: (7.5, 1.5)
+
+	\item (1, 3) and (7.5, 1.5).
+
+\end{enumerate}
+
+\newpage
+\section{Clustering -- Hierarchical Clustering}
+
+\begin{enumerate}[label=(\alph*)]
+	\item $5 - 1 = 4$ merging steps.
+	\item $C_1 \leftarrow \{(8, 8), (9, 8)\}$, with distance 1.
+	\item $C_2 \leftarrow \{(1, 0), (2, 1)\}$, with distance 1.414.
+	\item $C_3 \leftarrow \{(9, 6), \dots C_1\}$, with distance 2.
+	\item $C_4 \leftarrow \{\dots C_2, \dots C_3\}$, with distance 8.6023.
+	\item For this particular dataset, 2 clusters would be appropriate. The distance between points within clusters $C_2$ and $C_3$ are usually small (1-2), but
+	      the distance between the two clusters is large (8.6).
+\end{enumerate}
+
+
+\end{document}
